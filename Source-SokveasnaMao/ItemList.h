@@ -4,6 +4,7 @@ class ItemList
 {
 private:
 	ItemNode* itemNode;
+	ItemNode* itemCurrent;
 	int itemSize;
 public:
 	ItemList();
@@ -18,5 +19,14 @@ public:
 	ItemNode* FindNode(int key);
 	int NumNodes() const;
 	bool NodeExists(int key);
+
+	void MoveToHead();
+	void MoveToTail();
+	bool MoveNext();
+	bool MovePrev();
+	ItemNode* GetCurrent() const;
+	bool IsHead() const;
+	bool IsTail() const;
+	void ResetCurrent();
 };
 
