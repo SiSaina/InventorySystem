@@ -1,11 +1,12 @@
 #include "ItemList.h"
 ItemList::ItemList() {
-	itemNode = nullptr;
+	itemHead = nullptr;
 	itemCurrent = nullptr;
 	itemSize = 0;
+	nextId = 1;
 }
 ItemList::~ItemList() {
-	ItemNode* remove = itemNode;
+	ItemNode* remove = itemHead;
 	ItemNode* next = nullptr;
 	while (remove != nullptr) {
 		next = remove->GetNext();
@@ -14,29 +15,34 @@ ItemList::~ItemList() {
 	}
 	itemCurrent = nullptr;
 }
-void ItemList::InsertHead(int key, Item item)
+void ItemList::InsertHead(Item item)
 {
-	ItemNode* newNode = new ItemNode(key);
+	int id = nextId;
+	nextId++;
+	ItemNode* newNode = new ItemNode(id);
 	newNode->SetItem(item);
-	newNode->SetNext(itemNode);
-	itemNode != nullptr ? itemNode->SetPrev(itemNode) : itemNode->SetPrev(nullptr);
-	itemNode = newNode;
+	newNode->SetNext(itemHead);
+	newNode->SetPrev(nullptr);
+	// if there's list, set the prevNode old head to new head
+	if (itemHead != nullptr) itemHead->SetPrev(newNode);
+	itemHead = newNode;
 	itemCurrent = newNode;
 	itemSize++;
 }
-void ItemList::InsertTail(int key, Item item)
+void ItemList::InsertTail(Item item)
 {
-	ItemNode* newNode = new ItemNode(key);
+	int id = nextId;
+	nextId++;
+	ItemNode* newNode = new ItemNode(id);
 	newNode->SetItem(item);
-	if (itemNode != nullptr) {
-		ItemNode* temp = itemNode;
-		while (temp->GetNext() != nullptr) {
-			temp = temp->GetNext();
-		}
-		temp->SetNext(newNode);
-		newNode->SetPrev(temp);
+	newNode->SetNext(nullptr);
+	// no list
+	if (itemHead == nullptr) {
+		newNode->SetPrev(nullptr);
+		itemHead = newNode;
 	}
 	else {
+		// if list, set current node to tail
 		MoveToTail();
 		newNode->SetPrev(itemCurrent);
 		itemCurrent->SetNext(newNode);
@@ -45,17 +51,21 @@ void ItemList::InsertTail(int key, Item item)
 	itemSize++;
 }
 
-void ItemList::InsertBody(int position, int key, Item item)
+void ItemList::InsertBody(int position, Item item)
 {
 	if (position < 0 || position > itemSize) { throw "Invalid position"; }
-	if (position == 0) { InsertHead(key, item); return; }
-	if (position == itemSize) { InsertTail(key, item); return; }
+	if (position == 0) { InsertHead(item); return; }
+	if (position == itemSize) { InsertTail(item); return; }
 
-	ItemNode* newNode = new ItemNode(key);
+	int id = nextId;
+	nextId++;
+
+	ItemNode* newNode = new ItemNode(id);
 	newNode->SetItem(item);
 
+	// move current node to second last correct position (if 10, current would be 9)
 	MoveToHead();
-	for (int i = 0;i < position - 1;i++)MoveNext();
+	for (int i = 0;i < position - 1;i++) MoveNext();
 
 	ItemNode* prev = itemCurrent;
 	ItemNode* next = itemCurrent->GetNext();
@@ -63,6 +73,8 @@ void ItemList::InsertBody(int position, int key, Item item)
 	newNode->SetNext(next);
 	newNode->SetPrev(prev);
 	prev->SetNext(newNode);
+
+	//if last node is not null
 	if(next != nullptr) next->SetPrev(newNode);
 
 	itemCurrent = newNode;
@@ -71,21 +83,24 @@ void ItemList::InsertBody(int position, int key, Item item)
 
 void ItemList::DeleteHead()
 {
-	if (itemNode == nullptr) throw "No list";
-	ItemNode* temp = itemNode;
-	itemNode = itemNode->GetNext();
-	if (itemNode != nullptr) itemNode->SetPrev(nullptr);
-	if (itemCurrent == temp) itemCurrent = itemNode;
+	if (itemHead == nullptr) throw "No list";
+
+	ItemNode* temp = itemHead;
+	itemHead = itemHead->GetNext();
+
+	if (itemHead != nullptr) itemHead->SetPrev(nullptr);
+	if (itemCurrent == temp) itemCurrent = itemHead;
+
 	delete temp;
 	itemSize--;
 }
 
 void ItemList::DeleteTail()
 {
-	if (itemNode == nullptr) throw "No list";
+	if (itemHead == nullptr) throw "No list";
 	if (itemSize == 1) {
-		delete itemNode;
-		itemNode = nullptr;
+		delete itemHead;
+		itemHead = nullptr;
 		itemCurrent = nullptr;
 		itemSize--;
 		return;
@@ -104,7 +119,9 @@ void ItemList::DeleteTail()
 
 void ItemList::DeleteBody(int position)
 {
-	if (itemNode == nullptr) throw "no list";
+	// no list
+	if (itemHead == nullptr) throw "no list";
+	// user enter out of range position
 	if (position < 0 || position >= itemSize) throw "invalid input";
 	if (itemSize == 1) { DeleteHead(); return; }
 	if (position == 0) { DeleteHead(); return; }
@@ -128,48 +145,65 @@ void ItemList::DeleteBody(int position)
 ItemNode* ItemList::GetNode(int position) const
 {
 	if (position < 0 || position >= itemSize) throw "Invalid input";
-	ItemNode* newNode = itemNode;
+	ItemNode* newNode = itemHead;
 	for (int i = 0;i < position;i++) newNode = newNode->GetNext();
 	return newNode;
 }
 
-ItemNode* ItemList::FindNode(int key)
+ItemNode* ItemList::FindNode(int id)
 {
+	// move current node to next until match with id
 	MoveToHead();
 	do {
-		if (itemCurrent->GetKey() == key) return itemCurrent;
+		if (itemCurrent->Getid() == id) return itemCurrent;
 	} while (MoveNext());
 	throw "Not found";
 }
 
 int ItemList::NumNodes() const { return itemSize; };
 
-bool ItemList::NodeExists(int key)
+bool ItemList::NodeExists(int id)
 {
 	MoveToHead();
 	do {
-		if (itemCurrent->GetKey() == key) return true;
+		if (itemCurrent->Getid() == id) return true;
 	} while (MoveNext());
 	return false;
 }
 
+void ItemList::DisplayList() {
+	MoveToHead();
+	while (itemCurrent != nullptr) {
+		cout << "id: " << itemCurrent->Getid() << endl;
+		cout << "Item Name: " << itemCurrent->GetItem().GetName() << endl;
+		cout << "Item Type: " << itemCurrent->GetItem().GetType() << endl;
+		cout << "Item Price: " << itemCurrent->GetItem().GetPrice() << endl;
+		cout << "Item Quantity: " << itemCurrent->GetItem().GetQuantity() << endl;
+		cout << "_____________________" << endl;
+		MoveNext();
+	}
+}
+
 void ItemList::MoveToHead()
 {
-	if (itemNode == nullptr) throw "no list";
-	itemCurrent = itemNode;
+	if (itemHead == nullptr) throw "no list";
+	itemCurrent = itemHead;
 }
 
 void ItemList::MoveToTail()
 {
-	if (itemNode == nullptr) throw "no list";
-	itemCurrent = itemNode;
+	if (itemHead == nullptr) throw "no list";
+	itemCurrent = itemHead;
 	while (itemCurrent->GetNext() != nullptr) itemCurrent = itemCurrent->GetNext();
 }
 
 bool ItemList::MoveNext()
 {
 	if (itemCurrent == nullptr) throw "current not set";
-	if (itemCurrent->GetNext() == nullptr) return false;
+	if (itemCurrent->GetNext() == nullptr) {
+		itemCurrent = nullptr;
+		return false;
+	}
 	itemCurrent = itemCurrent->GetNext();
 	return true;
 }

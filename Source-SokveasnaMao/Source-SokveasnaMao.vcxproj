@@ -123,14 +123,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Inventory.cpp" />
+    <ClCompile Include="InventoryManager.cpp" />
     <ClCompile Include="ItemList.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Validation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="InventoryManager.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemList.h" />
     <ClInclude Include="ItemNode.h" />
     <ClInclude Include="ItemType.h" />
+    <ClInclude Include="Validation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

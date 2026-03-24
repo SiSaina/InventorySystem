@@ -17,11 +17,11 @@ public:
 		price = 0.0f;
 		quantity = 0;
 	}
-	Item(string name) {
-		name = name;
-		type = Armor;
-		price = 0.0f;
-		quantity = 0;
+	Item(string name, ItemType type, float price, int quantity) {
+		this->name = name;
+		this->type = type;
+		this->price = price;
+		this->quantity = quantity;
 	};
 	string GetName() const { return name; };
 	ItemType GetType() const { return type; };

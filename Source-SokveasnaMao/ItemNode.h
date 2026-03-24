@@ -3,14 +3,14 @@
 class ItemNode
 {
 private:
-	int key;
+	int id;
 	Item item;
 	ItemNode* next;
 	ItemNode* prev;
 public:
-	ItemNode(int key) {
-		this->key = key;
-		item = Item("Unknown");
+	ItemNode(int id) {
+		this->id = id;
+		item = Item();
 		next = nullptr;
 		prev = nullptr;
 	};
@@ -18,11 +18,11 @@ public:
 		delete next;
 		delete prev;
 	};
-	int GetKey() const { return key; };
+	int Getid() const { return id; };
 	Item GetItem() const { return item; };
 	ItemNode* GetNext() const { return next; };
 	ItemNode* GetPrev() const { return prev; };
-	void SetKey(int key) { this->key = key; };
+	void Setid(int id) { this->id = id; };
 	void SetItem(Item item) { this->item = item; };
 	void SetNext(ItemNode* next) { this->next = next; };
 	void SetPrev(ItemNode* prev) { this->prev = prev; };

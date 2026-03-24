@@ -3,22 +3,26 @@
 class ItemList
 {
 private:
-	ItemNode* itemNode;
+	ItemNode* itemHead;
 	ItemNode* itemCurrent;
 	int itemSize;
+	int nextId;
 public:
 	ItemList();
 	~ItemList();
-	void InsertHead(int key, Item item);
-	void InsertTail(int key, Item item);
-	void InsertBody(int position, int key, Item item);
+
+	void InsertHead(Item item);
+	void InsertTail(Item item);
+	void InsertBody(int position, Item item);
 	void DeleteHead();
 	void DeleteTail();
 	void DeleteBody(int position);
+
 	ItemNode* GetNode(int position) const;
-	ItemNode* FindNode(int key);
+	ItemNode* FindNode(int id);
 	int NumNodes() const;
-	bool NodeExists(int key);
+	bool NodeExists(int id);
+	void DisplayList();
 
 	void MoveToHead();
 	void MoveToTail();
