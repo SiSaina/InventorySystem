@@ -19,7 +19,8 @@ public:
 	void DeleteBody(int position);
 
 	ItemNode* GetNode(int position) const;
-	ItemNode* FindNode(int id);
+	ItemNode* FindNodeById(int id);
+	ItemNode* FindNodeByName(string name);
 	int NumNodes() const;
 	bool NodeExists(int id);
 	void DisplayList();

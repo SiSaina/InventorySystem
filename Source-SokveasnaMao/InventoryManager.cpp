@@ -69,17 +69,52 @@ void InventoryManager::AddItem()
 	cout << "Enter quantity: ";
 	cin >> quantity;
 	Item newItem(name, type, price, quantity);
-	//itemList->InsertTail(newItem);
+
+	inventory->AddItem(newItem);
+	
 	cout << "Item added successfully" << endl;
 }
 
 void InventoryManager::EditItem()
 {
 	int choice = -1;
-	cout << "Search by what" << endl;
-	cout << "1. Key" << endl;
+	cout << "What kind of search" << endl;
+	cout << "1. Id" << endl;
 	cout << "2. Name" << endl;
-	cout << "3. Back" << endl;
+	cout << "0. Back" << endl;
+	cin >> choice;
+	switch (choice) {
+	case 1: {
+		int key = -1;
+		cout << "Enter id: ";
+		cin >> key;
+		ItemNode* node = inventory->SearchById(key);
+
+
+	}
+	case 2: {
+		int key = -1;
+		cout << "Enter id: ";
+		cin >> key;
+		ItemNode* node = inventory->SearchById(key);
+
+
+	}
+
+	case 3:
+	default:
+		cout << "Invalid input" << endl;
+		break;
+	}
+}
+
+void InventoryManager::DeleteItem()
+{
+	int choice = -1;
+	cout << "What kind of search" << endl;
+	cout << "1. Id" << endl;
+	cout << "2. Name" << endl;
+	cout << "0. Back" << endl;
 	cin >> choice;
 	switch (choice) {
 	case 1:
@@ -91,12 +126,9 @@ void InventoryManager::EditItem()
 	}
 }
 
-void InventoryManager::DeleteItem()
-{
-}
-
 void InventoryManager::LoadInventory()
 {
+
 }
 
 void InventoryManager::SaveInventory()

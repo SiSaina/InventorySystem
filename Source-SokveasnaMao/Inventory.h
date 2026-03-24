@@ -3,7 +3,7 @@
 class Inventory
 {
 private:
-	ItemList* list;
+	ItemList* itemList;
 public:
 	Inventory();
 	~Inventory();
@@ -14,10 +14,13 @@ public:
 	ItemNode* SearchById(int id);
 	ItemNode* SearchByName(string name);
 
-	void SortById();
-	void SortByName();
-	void SortByPrice();
-	void SortByQuantity();
+	static pair<ItemNode*, ItemNode*> FindNodeToSwap(ItemNode*& head, int x, int y);
+	void SwapNode(ItemNode* head, ItemNode* tail, int x, int y);
+
+	void QuickSortById();
+	void QuickSortByName();
+	void QuickSortByPrice();
+	void QuickSortByQuantity();
 
 	void Display() const;
 

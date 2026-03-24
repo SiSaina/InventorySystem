@@ -18,7 +18,7 @@ public:
 		delete next;
 		delete prev;
 	};
-	int Getid() const { return id; };
+	int GetId() const { return id; };
 	Item GetItem() const { return item; };
 	ItemNode* GetNext() const { return next; };
 	ItemNode* GetPrev() const { return prev; };

@@ -150,12 +150,20 @@ ItemNode* ItemList::GetNode(int position) const
 	return newNode;
 }
 
-ItemNode* ItemList::FindNode(int id)
+ItemNode* ItemList::FindNodeById(int id)
 {
 	// move current node to next until match with id
 	MoveToHead();
 	do {
 		if (itemCurrent->Getid() == id) return itemCurrent;
+	} while (MoveNext());
+	throw "Not found";
+}
+
+ItemNode* ItemList::FindNodeByName(string name) {
+	MoveToHead();
+	do {
+		if (itemCurrent->GetItem().GetName() == name) return itemCurrent;
 	} while (MoveNext());
 	throw "Not found";
 }

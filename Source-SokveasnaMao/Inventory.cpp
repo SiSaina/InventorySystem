@@ -2,14 +2,17 @@
 
 Inventory::Inventory()
 {
+	itemList = new ItemList();
 }
 
 Inventory::~Inventory()
 {
+	delete itemList;
 }
 
 void Inventory::AddItem(const Item& item)
 {
+	itemList->InsertTail(item);
 }
 
 bool Inventory::DeleteItem(int id)
@@ -19,27 +22,49 @@ bool Inventory::DeleteItem(int id)
 
 ItemNode* Inventory::SearchById(int id)
 {
-	return nullptr;
+	return itemList->FindNodeById(id);
 }
 
 ItemNode* Inventory::SearchByName(string name)
 {
-	return nullptr;
+	return itemList->FindNodeByName(name);
 }
 
-void Inventory::SortById()
+pair<ItemNode*, ItemNode*> Inventory::FindNodeToSwap(ItemNode*& head, int x, int y) {
+	ItemNode* node1 = nullptr;
+	ItemNode* node2 = nullptr;
+	ItemNode* temp = head;
+
+	while (temp != nullptr) {
+		if (temp->GetId() == x) node1 = temp;
+		if (temp->GetId() == y) node2 = temp;
+		temp->GetNext();
+	}
+	return pair<ItemNode*, ItemNode*>();
+}
+
+void Inventory::SwapNode(ItemNode* head, ItemNode* tail, int x, int y) {
+	if (head == nullptr || head->GetNext() == nullptr || x == y) return;
+
+
+
+}
+
+void Inventory::QuickSortById()
 {
 }
 
-void Inventory::SortByName()
+void Inventory::QuickSortByName()
+{
+	if (itemList == nullptr) throw "no item";
+
+}
+
+void Inventory::QuickSortByPrice()
 {
 }
 
-void Inventory::SortByPrice()
-{
-}
-
-void Inventory::SortByQuantity()
+void Inventory::QuickSortByQuantity()
 {
 }
 
