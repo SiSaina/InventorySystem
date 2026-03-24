@@ -3,19 +3,19 @@
 class ItemNode
 {
 private:
-	int mKey;
-	Item mItem;
-	ItemNode* mNext;
-	ItemNode* mPrev;
+	int key;
+	Item item;
+	ItemNode* next;
+	ItemNode* prev;
 public:
 	ItemNode(int key);
 	~ItemNode();
-	int Getkey() const;
+	int GetKey() const;
 	Item GetItem() const;
 	ItemNode* GetNext() const;
 	ItemNode* GetPrev() const;
 	void SetKey(int key);
-	void SetItem(Item Item);
-	void SetNext(ItemNode* Next);
-	void SetPrev(ItemNode* Prev);
+	void SetItem(Item item);
+	void SetNext(ItemNode* next);
+	void SetPrev(ItemNode* prev);
 };

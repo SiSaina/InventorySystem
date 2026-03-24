@@ -6,29 +6,29 @@ using namespace std;
 class Item
 {
 private:
-	string Name;
-	ItemType Type;
-	float Price;
-	int Quantity;
+	string name;
+	ItemType type;
+	float price;
+	int quantity;
 public:
 	Item() {
-		Name = "Unknown";
-		Type = Armor;
-		Price = 0.0f;
-		Quantity = 0;
+		name = "Unknown";
+		type = Armor;
+		price = 0.0f;
+		quantity = 0;
 	}
 	Item(string name) {
-		Name = name;
-		Type = Armor;
-		Price = 0.0f;
-		Quantity = 0;
+		name = name;
+		type = Armor;
+		price = 0.0f;
+		quantity = 0;
 	};
-	string GetName() const { return Name; };
-	ItemType GetType() const { return Type; };
-	float GetPrice() const { return Price; };
-	int GetQuantity() const { return Quantity; };
-	void SetName(string name) { Name = name; };
-	void SetType(ItemType type) { Type = type; };
-	void SetPrice(float price) { Price = price; };
-	void SetQuantity(int quantity) { Quantity = quantity; };
+	string GetName() const { return name; };
+	ItemType GetType() const { return type; };
+	float GetPrice() const { return price; };
+	int GetQuantity() const { return quantity; };
+	void SetName(string name) { name = name; };
+	void SetType(ItemType type) { type = type; };
+	void SetPrice(float price) { price = price; };
+	void SetQuantity(int quantity) { quantity = quantity; };
 };
