@@ -8,6 +8,7 @@ private:
 	int option;
 public:
 	InventoryManager();
+	~InventoryManager();
 	void DisplayInventory();
 	void SortInventory();
 	void AddItem();

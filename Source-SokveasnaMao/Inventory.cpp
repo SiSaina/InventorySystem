@@ -1,4 +1,7 @@
 #include "Inventory.h"
+#include <fstream>
+#include <sstream>
+#include <filesystem>
 
 Inventory::Inventory()
 {
@@ -74,8 +77,81 @@ void Inventory::Display() const
 
 void Inventory::LoadFromFile(const string& filename)
 {
+
+	ifstream file(filename);
+
+	if (!file.is_open())
+	{
+		cout << "Cannot open: " << filename << endl;
+		return;
+	}
+	string line;
+
+	getline(file, line);
+
+	while(getline(file, line)) {
+		if (line.empty()) continue;
+		string name, typeStr, priceStr, quantityStr;
+		
+		stringstream ss(line);
+
+		getline(ss, name, '/');
+		getline(ss, name, '/');
+		getline(ss, typeStr, '/');
+		getline(ss, typeStr, '/');
+		getline(ss, priceStr, '/');
+		getline(ss, priceStr, '/');
+		getline(ss, quantityStr, '/');
+		
+		name.erase(remove(name.begin(), name.end(), ' '), name.end());
+		typeStr.erase(remove(typeStr.begin(), typeStr.end(), ' '), typeStr.end());
+		priceStr.erase(remove(priceStr.begin(), priceStr.end(), ' '), priceStr.end());
+		quantityStr.erase(remove(quantityStr.begin(), quantityStr.end(), ' '), quantityStr.end());
+		
+		float price = stof(priceStr);
+		int quantity = stoi(quantityStr);
+
+		ItemType type;
+
+		if (typeStr == "Armor") type = Armor;
+		else if (typeStr == "Consumable") type = Consumable;
+		else if (typeStr == "Utility") type = Utility;
+		else if (typeStr == "Weapon") type = Weapon;
+		else throw "Invalid item type";
+
+		Item item(name, type, price, quantity);
+		AddItem(item);
+	};
+
+	file.close();
+	cout << "Loaded from " << filename << endl;;
 }
 
 void Inventory::SaveToFile(const string& filename)
 {
+	ofstream file(filename);
+
+	if(!file.is_open()) {
+		throw "Could not open file";
+	}
+
+	ItemNode* temp = itemList->GetNode(0);
+
+	while (temp != nullptr)
+	{
+		Item item = temp->GetItem();
+
+		file << temp->GetId() << " "
+			<< item.GetName() << " "
+			<< item.GetType() << " "
+			<< item.GetPrice() << " "
+			<< item.GetQuantity()
+			<< endl;
+
+		temp = temp->GetNext();
+	}
+
+	file.close();
+
+	cout << "Saved to " << filename << endl;;
 }

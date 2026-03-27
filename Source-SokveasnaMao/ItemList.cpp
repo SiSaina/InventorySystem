@@ -155,7 +155,7 @@ ItemNode* ItemList::FindNodeById(int id)
 	// move current node to next until match with id
 	MoveToHead();
 	do {
-		if (itemCurrent->Getid() == id) return itemCurrent;
+		if (itemCurrent->GetId() == id) return itemCurrent;
 	} while (MoveNext());
 	throw "Not found";
 }
@@ -174,7 +174,7 @@ bool ItemList::NodeExists(int id)
 {
 	MoveToHead();
 	do {
-		if (itemCurrent->Getid() == id) return true;
+		if (itemCurrent->GetId() == id) return true;
 	} while (MoveNext());
 	return false;
 }
@@ -182,7 +182,7 @@ bool ItemList::NodeExists(int id)
 void ItemList::DisplayList() {
 	MoveToHead();
 	while (itemCurrent != nullptr) {
-		cout << "id: " << itemCurrent->Getid() << endl;
+		cout << "id: " << itemCurrent->GetId() << endl;
 		cout << "Item Name: " << itemCurrent->GetItem().GetName() << endl;
 		cout << "Item Type: " << itemCurrent->GetItem().GetType() << endl;
 		cout << "Item Price: " << itemCurrent->GetItem().GetPrice() << endl;

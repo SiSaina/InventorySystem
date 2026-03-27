@@ -8,6 +8,7 @@ public:
 	Inventory();
 	~Inventory();
 
+	void DisplayList() const { itemList->DisplayList(); };
 	void AddItem(const Item& item);
 	bool DeleteItem(int id);
 

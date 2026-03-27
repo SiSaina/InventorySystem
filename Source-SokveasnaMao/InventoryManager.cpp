@@ -12,7 +12,7 @@ InventoryManager::~InventoryManager()
 
 void InventoryManager::DisplayInventory()
 {
-	//inventory->DisplayList();
+	inventory->DisplayList();
 }
 
 void InventoryManager::SortInventory()
@@ -128,11 +128,12 @@ void InventoryManager::DeleteItem()
 
 void InventoryManager::LoadInventory()
 {
-
+	inventory->LoadFromFile("Inventory.txt");
 }
 
 void InventoryManager::SaveInventory()
 {
+	inventory->SaveToFile("Inventory2.txt");
 }
 
 void InventoryManager::DisplayMenu()
@@ -175,7 +176,6 @@ void InventoryManager::Run()
 		case 1:
 			system("cls");
 			DisplayInventory();
-			cin >> option;
 			break;
 		case 2:
 			SortInventory();
