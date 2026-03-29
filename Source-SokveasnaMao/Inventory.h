@@ -8,7 +8,7 @@ public:
 	Inventory();
 	~Inventory();
 
-	void DisplayList() const { itemList->DisplayList(); };
+	void DisplayInventory() const;
 	void AddItem(const Item& item);
 	bool DeleteItem(int id);
 
@@ -16,14 +16,12 @@ public:
 	ItemNode* SearchByName(string name);
 
 	static pair<ItemNode*, ItemNode*> FindNodeToSwap(ItemNode*& head, int x, int y);
-	void SwapNode(ItemNode* head, ItemNode* tail, int x, int y);
+	void SwapNodes(ItemNode* a, ItemNode* b);
 
-	void QuickSortById();
+	int PartitionByName(int low, int high);
 	void QuickSortByName();
 	void QuickSortByPrice();
 	void QuickSortByQuantity();
-
-	void Display() const;
 
 	void LoadFromFile(const string& filename);
 	void SaveToFile(const string& filename);

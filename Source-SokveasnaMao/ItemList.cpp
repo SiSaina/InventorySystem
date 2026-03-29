@@ -1,4 +1,5 @@
 #include "ItemList.h"
+#include <iomanip>
 ItemList::ItemList() {
 	itemHead = nullptr;
 	itemCurrent = nullptr;
@@ -17,9 +18,9 @@ ItemList::~ItemList() {
 }
 void ItemList::InsertHead(Item item)
 {
-	int id = nextId;
-	nextId++;
-	ItemNode* newNode = new ItemNode(id);
+	//int id = nextId;
+	//nextId++;
+	ItemNode* newNode = new ItemNode();
 	newNode->SetItem(item);
 	newNode->SetNext(itemHead);
 	newNode->SetPrev(nullptr);
@@ -31,9 +32,9 @@ void ItemList::InsertHead(Item item)
 }
 void ItemList::InsertTail(Item item)
 {
-	int id = nextId;
-	nextId++;
-	ItemNode* newNode = new ItemNode(id);
+	//int id = nextId;
+	//nextId++;
+	ItemNode* newNode = new ItemNode();
 	newNode->SetItem(item);
 	newNode->SetNext(nullptr);
 	// no list
@@ -57,10 +58,10 @@ void ItemList::InsertBody(int position, Item item)
 	if (position == 0) { InsertHead(item); return; }
 	if (position == itemSize) { InsertTail(item); return; }
 
-	int id = nextId;
-	nextId++;
+	//int id = nextId;
+	//nextId++;
 
-	ItemNode* newNode = new ItemNode(id);
+	ItemNode* newNode = new ItemNode();
 	newNode->SetItem(item);
 
 	// move current node to second last correct position (if 10, current would be 9)
@@ -150,12 +151,22 @@ ItemNode* ItemList::GetNode(int position) const
 	return newNode;
 }
 
-ItemNode* ItemList::FindNodeById(int id)
+//ItemNode* ItemList::FindNodeById(int id)
+//{
+//	// move current node to next until match with id
+//	MoveToHead();
+//	do {
+//		if (itemCurrent->GetId() == id) return itemCurrent;
+//	} while (MoveNext());
+//	throw "Not found";
+//}
+
+ItemNode* ItemList::FindNodeByPosition(int position)
 {
-	// move current node to next until match with id
+	// move current node to next until match with position
 	MoveToHead();
 	do {
-		if (itemCurrent->GetId() == id) return itemCurrent;
+		if (itemCurrent == GetNode(position)) return itemCurrent;
 	} while (MoveNext());
 	throw "Not found";
 }
@@ -170,24 +181,36 @@ ItemNode* ItemList::FindNodeByName(string name) {
 
 int ItemList::NumNodes() const { return itemSize; };
 
-bool ItemList::NodeExists(int id)
+//bool ItemList::NodeExists(int id)
+//{
+//	MoveToHead();
+//	do {
+//		if (itemCurrent->GetId() == id) return true;
+//	} while (MoveNext());
+//	return false;
+//}
+
+bool ItemList::NodeExistsByPosition(int position)
 {
-	MoveToHead();
 	do {
-		if (itemCurrent->GetId() == id) return true;
+		if (itemCurrent == GetNode(position)) return true;
 	} while (MoveNext());
-	return false;
+	return true;
 }
 
 void ItemList::DisplayList() {
 	MoveToHead();
+	// set width for each column and left align
+	cout << left << setw(5) << "Name" << setw(25) << "Type" << setw(10) << "Price" << setw(10) << "Quantity" << endl;
+	cout << "--------------------------------------------------------------------------------" << endl;
 	while (itemCurrent != nullptr) {
-		cout << "id: " << itemCurrent->GetId() << endl;
-		cout << "Item Name: " << itemCurrent->GetItem().GetName() << endl;
-		cout << "Item Type: " << itemCurrent->GetItem().GetType() << endl;
-		cout << "Item Price: " << itemCurrent->GetItem().GetPrice() << endl;
-		cout << "Item Quantity: " << itemCurrent->GetItem().GetQuantity() << endl;
-		cout << "_____________________" << endl;
+		// set width for each column and left align
+		cout << left
+			<< setw(5) << itemCurrent->GetItem().GetName()
+			<< setw(25) << itemCurrent->GetItem().GetTypeString()
+			<< setw(10) << itemCurrent->GetItem().GetPrice()
+			<< setw(10) << itemCurrent->GetItem().GetQuantity()
+			<< endl;
 		MoveNext();
 	}
 }

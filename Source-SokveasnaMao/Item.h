@@ -25,6 +25,15 @@ public:
 	};
 	string GetName() const { return name; };
 	ItemType GetType() const { return type; };
+	string GetTypeString() const {
+		switch (type) {
+		case Armor: return "Armor";
+		case Consumable: return "Consumable";
+		case Utility: return "Utility";
+		case Weapon: return "Weapon";
+		default: return "Unknown";
+		}
+	};
 	float GetPrice() const { return price; };
 	int GetQuantity() const { return quantity; };
 	void SetName(string name) { name = name; };

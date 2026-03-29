@@ -23,9 +23,9 @@ bool Inventory::DeleteItem(int id)
 	return false;
 }
 
-ItemNode* Inventory::SearchById(int id)
+ItemNode* Inventory::SearchById(int position)
 {
-	return itemList->FindNodeById(id);
+	return itemList->FindNodeByPosition(position);
 }
 
 ItemNode* Inventory::SearchByName(string name)
@@ -38,23 +38,26 @@ pair<ItemNode*, ItemNode*> Inventory::FindNodeToSwap(ItemNode*& head, int x, int
 	ItemNode* node2 = nullptr;
 	ItemNode* temp = head;
 
+	int index = 0;
+
 	while (temp != nullptr) {
-		if (temp->GetId() == x) node1 = temp;
-		if (temp->GetId() == y) node2 = temp;
+		if (index == x) node1 = temp;
+		if (index == y) node2 = temp;
 		temp->GetNext();
 	}
-	return pair<ItemNode*, ItemNode*>();
+	return { node1, node2 };
 }
 
-void Inventory::SwapNode(ItemNode* head, ItemNode* tail, int x, int y) {
-	if (head == nullptr || head->GetNext() == nullptr || x == y) return;
-
-
-
+void Inventory::SwapNodes(ItemNode* a, ItemNode* b) {
+	if (!a || !b) throw "Invalid input";
+	Item temp = a->GetItem();
+	a->SetItem(b->GetItem());
+	b->SetItem(temp);
 }
 
-void Inventory::QuickSortById()
-{
+int Inventory::PartitionByName(int low, int high) {
+	ItemNode* pivotNode = itemList->GetNode(high);
+	return low;
 }
 
 void Inventory::QuickSortByName()
@@ -71,8 +74,9 @@ void Inventory::QuickSortByQuantity()
 {
 }
 
-void Inventory::Display() const
+void Inventory::DisplayInventory() const
 {
+	itemList->DisplayList();
 }
 
 void Inventory::LoadFromFile(const string& filename)
@@ -96,14 +100,15 @@ void Inventory::LoadFromFile(const string& filename)
 		stringstream ss(line);
 
 		getline(ss, name, '/');
-		getline(ss, name, '/');
+		ss.ignore(1);
 		getline(ss, typeStr, '/');
-		getline(ss, typeStr, '/');
+		ss.ignore(1);
 		getline(ss, priceStr, '/');
-		getline(ss, priceStr, '/');
+		ss.ignore(1);
 		getline(ss, quantityStr, '/');
-		
-		name.erase(remove(name.begin(), name.end(), ' '), name.end());
+
+		name.erase(0, name.find_first_not_of(" "));
+		name.erase(name.find_last_not_of(" ") + 1);
 		typeStr.erase(remove(typeStr.begin(), typeStr.end(), ' '), typeStr.end());
 		priceStr.erase(remove(priceStr.begin(), priceStr.end(), ' '), priceStr.end());
 		quantityStr.erase(remove(quantityStr.begin(), quantityStr.end(), ' '), quantityStr.end());
@@ -141,8 +146,7 @@ void Inventory::SaveToFile(const string& filename)
 	{
 		Item item = temp->GetItem();
 
-		file << temp->GetId() << " "
-			<< item.GetName() << " "
+		file << item.GetName() << " "
 			<< item.GetType() << " "
 			<< item.GetPrice() << " "
 			<< item.GetQuantity()

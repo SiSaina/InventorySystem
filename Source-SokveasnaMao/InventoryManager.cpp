@@ -12,7 +12,7 @@ InventoryManager::~InventoryManager()
 
 void InventoryManager::DisplayInventory()
 {
-	inventory->DisplayList();
+	inventory->DisplayInventory();
 }
 
 void InventoryManager::SortInventory()
@@ -90,15 +90,17 @@ void InventoryManager::EditItem()
 		cin >> key;
 		ItemNode* node = inventory->SearchById(key);
 
-
+		cout << node->GetItem().GetName() << endl;
+		break;
 	}
 	case 2: {
-		int key = -1;
+		string key = " ";
 		cout << "Enter id: ";
 		cin >> key;
-		ItemNode* node = inventory->SearchById(key);
+		ItemNode* node = inventory->SearchByName(key);
 
-
+		cout << node->GetItem().GetName() << endl;
+		break;
 	}
 
 	case 3:
@@ -178,22 +180,28 @@ void InventoryManager::Run()
 			DisplayInventory();
 			break;
 		case 2:
+			system("cls");
 			SortInventory();
 			break;
 		case 3:
+			system("cls");
 			cin.ignore();
 			AddItem();
 			break;
 		case 4:
+			system("cls");
 			EditItem();
 			break;
 		case 5:
+			system("cls");
 			DeleteItem();
 			break;
 		case 6:
+			system("cls");
 			LoadInventory();
 			break;
 		case 7:
+			system("cls");
 			SaveInventory();
 			break;
 		case 0:

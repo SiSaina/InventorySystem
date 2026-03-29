@@ -19,10 +19,12 @@ public:
 	void DeleteBody(int position);
 
 	ItemNode* GetNode(int position) const;
-	ItemNode* FindNodeById(int id);
+	//ItemNode* FindNodeById();
+	ItemNode* FindNodeByPosition(int position);
 	ItemNode* FindNodeByName(string name);
 	int NumNodes() const;
-	bool NodeExists(int id);
+	//bool NodeExistsById(int id);
+	bool NodeExistsByPosition(int position);
 	void DisplayList();
 
 	void MoveToHead();
