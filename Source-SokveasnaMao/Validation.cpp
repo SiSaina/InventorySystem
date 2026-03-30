@@ -1,1 +1,87 @@
-#include "validation.h"
+#include "Validation.h"
+
+int Validation::ValidateIntInput(string prompt, int min, int max)
+{
+    int value = 0;
+    while (true) {
+		cout << prompt;
+        if (!(cin >> value))
+        {
+            cout << "Invalid number. Try again.\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+        if (value < min || value > max)
+        {
+            cout << "Input must be between " << min << " and " << max << endl;
+            continue;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return value;
+    }
+
+}
+
+string Validation::ValidateStringInput(string prompt)
+{
+    string value;
+    while (true) {
+        cout << prompt;
+        getline(cin, value);
+        if (value.empty())
+        {
+            cout << "Input cannot be empty. Try again.\n";
+            continue;
+        }
+        return value;
+	}
+}
+
+float Validation::ValidateFloatInput(string prompt, float min, float max)
+{
+    float value = 0.0f;
+    while (true) {
+        cout << prompt;
+        if (!(cin >> value))
+        {
+            cout << "Invalid number. Try again.\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+        if (value < min || value > max)
+        {
+            cout << "Input must be between " << min << " and " << max << endl;
+            continue;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return value;
+	}
+}
+
+ItemType Validation::ValidateItemTypeInput(string prompt)
+{
+	int choice = -1;
+    while (true) {
+        cout << prompt << endl;
+		cout << "0. Armor" << endl;
+		cout << "1. Consumable" << endl;
+		cout << "2. Utility" << endl;
+        cout << "3. Weapon" << endl;
+        if (!(cin >> choice))
+        {
+            cout << "Invalid number. Try again.\n";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            continue;
+        }
+        if (choice < 0 || choice > 3)
+        {
+            cout << "Input must be between 0 and 3." << endl;
+            continue;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		return static_cast<ItemType>(choice);
+    }
+}

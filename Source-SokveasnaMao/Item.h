@@ -36,8 +36,8 @@ public:
 	};
 	float GetPrice() const { return price; };
 	int GetQuantity() const { return quantity; };
-	void SetName(string name) { name = name; };
-	void SetType(ItemType type) { type = type; };
-	void SetPrice(float price) { price = price; };
-	void SetQuantity(int quantity) { quantity = quantity; };
+	void SetName(string name) { this->name = name; };
+	void SetType(ItemType type) { this->type = type; };
+	void SetPrice(float price) { this->price = price; };
+	void SetQuantity(int quantity) { this->quantity = quantity; };
 };

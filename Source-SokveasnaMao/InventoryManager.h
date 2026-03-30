@@ -1,5 +1,6 @@
 #pragma once
 #include "Inventory.h"
+#include "validation.h"
 
 class InventoryManager
 {
@@ -9,6 +10,7 @@ private:
 public:
 	InventoryManager();
 	~InventoryManager();
+
 	void DisplayInventory();
 	void SortInventory();
 	void AddItem();
@@ -16,7 +18,11 @@ public:
 	void DeleteItem();
 	void LoadInventory();
 	void SaveInventory();
+
+	void DisplaySearchMenu();
+	void DisplayAttributeMenu();
 	void DisplayMenu();
 	void DisplayMDSHeader();
+	
 	void Run();
 };

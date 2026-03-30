@@ -18,19 +18,20 @@ void Inventory::AddItem(const Item& item)
 	itemList->InsertTail(item);
 }
 
-bool Inventory::DeleteItem(int id)
+void Inventory::DeleteItem(ItemNode* item)
 {
-	return false;
-}
-
-ItemNode* Inventory::SearchById(int position)
-{
-	return itemList->FindNodeByPosition(position);
+	int position = itemList->FindNodeByNode(item);
+	itemList->DeleteBody(position);
 }
 
 ItemNode* Inventory::SearchByName(string name)
 {
 	return itemList->FindNodeByName(name);
+}
+
+ItemNode* Inventory::SearchByPosition(int position)
+{
+	return itemList->FindNodeByPosition(position);
 }
 
 pair<ItemNode*, ItemNode*> Inventory::FindNodeToSwap(ItemNode*& head, int x, int y) {

@@ -1,5 +1,6 @@
 #pragma once
 #include "ItemList.h"
+#include "Validation.h"
 class Inventory
 {
 private:
@@ -10,10 +11,10 @@ public:
 
 	void DisplayInventory() const;
 	void AddItem(const Item& item);
-	bool DeleteItem(int id);
+	void DeleteItem(ItemNode* item);
 
-	ItemNode* SearchById(int id);
 	ItemNode* SearchByName(string name);
+	ItemNode* SearchByPosition(int position);
 
 	static pair<ItemNode*, ItemNode*> FindNodeToSwap(ItemNode*& head, int x, int y);
 	void SwapNodes(ItemNode* a, ItemNode* b);
@@ -22,6 +23,8 @@ public:
 	void QuickSortByName();
 	void QuickSortByPrice();
 	void QuickSortByQuantity();
+
+	int GetItemCount() const { return itemList->NumNodes(); };
 
 	void LoadFromFile(const string& filename);
 	void SaveToFile(const string& filename);

@@ -3,26 +3,28 @@
 class ItemNode
 {
 private:
-	//int id;
 	Item item;
 	ItemNode* next;
 	ItemNode* prev;
 public:
 	ItemNode() {
-		//this->id = id;
 		item = Item();
 		next = nullptr;
 		prev = nullptr;
 	};
 	~ItemNode() {
-		delete next;
-		delete prev;
+		next = nullptr;
+		prev = nullptr;
 	};
-	//int GetId() const { return id; };
-	Item GetItem() const { return item; };
+
+	// use & to pass by reference
+	Item& GetItem() { return item; };
+	// read-only
+	const Item& GetItem() const { return item; };
+
 	ItemNode* GetNext() const { return next; };
 	ItemNode* GetPrev() const { return prev; };
-	//void Setid(int id) { this->id = id; };
+
 	void SetItem(Item item) { this->item = item; };
 	void SetNext(ItemNode* next) { this->next = next; };
 	void SetPrev(ItemNode* prev) { this->prev = prev; };
