@@ -18,8 +18,6 @@ ItemList::~ItemList() {
 }
 void ItemList::InsertHead(Item item)
 {
-	//int id = nextId;
-	//nextId++;
 	ItemNode* newNode = new ItemNode();
 	newNode->SetItem(item);
 	newNode->SetNext(itemHead);
@@ -32,8 +30,6 @@ void ItemList::InsertHead(Item item)
 }
 void ItemList::InsertTail(Item item)
 {
-	//int id = nextId;
-	//nextId++;
 	ItemNode* newNode = new ItemNode();
 	newNode->SetItem(item);
 	newNode->SetNext(nullptr);
@@ -57,9 +53,6 @@ void ItemList::InsertBody(int position, Item item)
 	if (position < 0 || position > itemSize) { throw "Invalid position"; }
 	if (position == 0) { InsertHead(item); return; }
 	if (position == itemSize) { InsertTail(item); return; }
-
-	//int id = nextId;
-	//nextId++;
 
 	ItemNode* newNode = new ItemNode();
 	newNode->SetItem(item);

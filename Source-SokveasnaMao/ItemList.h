@@ -11,6 +11,12 @@ public:
 	ItemList();
 	~ItemList();
 
+	ItemNode* GetHead() const { return itemHead; };
+	ItemNode* GetCurrentNode() const { return itemCurrent; };
+
+	void SetHead(ItemNode* head) { itemHead = head; };
+	void SetCurrentNode(ItemNode* current) { itemCurrent = current; };
+
 	void InsertHead(Item item);
 	void InsertTail(Item item);
 	void InsertBody(int position, Item item);

@@ -34,12 +34,48 @@ ItemNode* Inventory::SearchByPosition(int position)
 	return itemList->FindNodeByPosition(position);
 }
 
+// swaping item by pointer
 void Inventory::SwapNodes(ItemNode* a, ItemNode* b) {
 	if (!a || !b) throw "Invalid node";
 
-	Item temp = a->GetItem();
-	a->SetItem(b->GetItem());
-	b->SetItem(temp);
+	// store surrounding nodes of a and b
+	ItemNode* prevA = a->GetPrev();
+	ItemNode* nextA = a->GetNext();
+	
+	ItemNode* prevB = b->GetPrev();
+	ItemNode* nextB = b->GetNext();
+
+	// case 1: if a is directly before b
+	if(nextA == b) {
+		a->SetNext(nextB);
+		a->SetPrev(b);
+		b->SetNext(a);
+		b->SetPrev(prevA);
+		if (prevA) prevA->SetNext(b);
+		if (nextB) nextB->SetPrev(a);
+	}
+	// case 2: if b is directly before a
+	else if (nextB == a) {
+		b->SetNext(nextA);
+		b->SetPrev(a);
+		a->SetNext(b);
+		a->SetPrev(prevB);
+		if (prevB) prevB->SetNext(a);
+		if (nextA) nextA->SetPrev(b);
+	}
+	// case 3: if a and b are not adjacent
+	else {
+		a->SetNext(nextB);
+		a->SetPrev(prevB);
+		b->SetNext(nextA);
+		b->SetPrev(prevA);
+		if (prevA) prevA->SetNext(b);
+		if (nextA) nextA->SetPrev(b);
+		if (prevB) prevB->SetNext(a);
+		if (nextB) nextB->SetPrev(a);
+	}
+	if(itemList->GetHead() == a) itemList->SetHead(b);
+	else if (itemList->GetHead() == b) itemList->SetHead(a);
 }
 bool Inventory::CompareNode(const Item& a, const Item& b, int attribute, bool order) {
 	// order = true for accending, false for decending
