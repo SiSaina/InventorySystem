@@ -1,12 +1,14 @@
 #pragma once
 #include "Inventory.h"
 #include "validation.h"
+#include <iostream>
+
+using namespace std;
 
 class InventoryManager
 {
 private:
 	Inventory* inventory;
-	int option;
 public:
 	InventoryManager();
 	~InventoryManager();

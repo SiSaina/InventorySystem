@@ -167,7 +167,7 @@ ItemNode* ItemList::FindNodeByPosition(int position)
 	// move current node to next until match with position
 	MoveToHead();
 	do {
-		if (itemCurrent == GetNode(position)) return itemCurrent;
+		if (itemCurrent == GetNode(position - 1)) return itemCurrent;
 	} while (MoveNext());
 	throw "Not found";
 }
@@ -181,15 +181,6 @@ ItemNode* ItemList::FindNodeByName(string name) {
 }
 
 int ItemList::NumNodes() const { return itemSize; };
-
-//bool ItemList::NodeExists(int id)
-//{
-//	MoveToHead();
-//	do {
-//		if (itemCurrent->GetId() == id) return true;
-//	} while (MoveNext());
-//	return false;
-//}
 
 bool ItemList::NodeExistsByPosition(int position)
 {

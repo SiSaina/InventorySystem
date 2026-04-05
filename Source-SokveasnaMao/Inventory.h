@@ -16,13 +16,14 @@ public:
 	ItemNode* SearchByName(string name);
 	ItemNode* SearchByPosition(int position);
 
-	static pair<ItemNode*, ItemNode*> FindNodeToSwap(ItemNode*& head, int x, int y);
 	void SwapNodes(ItemNode* a, ItemNode* b);
+	bool CompareNode(const Item& a, const Item& b, int attribute, bool order);
+	ItemNode* PartitionAccending(ItemNode* first, ItemNode* last, int attribute);
+	ItemNode* PartitionDescending(ItemNode* first, ItemNode* last, int attribute);
 
-	int PartitionByName(int low, int high);
-	void QuickSortByName();
-	void QuickSortByPrice();
-	void QuickSortByQuantity();
+	void QuickSortAccending(ItemNode* first, ItemNode* last, int attribute);
+	void QuickSortDescending(ItemNode* first, ItemNode* last, int attribute);
+	void QuickSort(int attribute, int order);
 
 	int GetItemCount() const { return itemList->NumNodes(); };
 

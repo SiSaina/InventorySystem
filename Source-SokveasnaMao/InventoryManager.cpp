@@ -2,7 +2,6 @@
 
 InventoryManager::InventoryManager() {
 	inventory = new Inventory();
-	option = -1;
 }
 
 InventoryManager::~InventoryManager()
@@ -18,35 +17,22 @@ void InventoryManager::DisplayInventory()
 void InventoryManager::SortInventory()
 {
 	DisplayAttributeMenu();
-	option = Validation::ValidateIntInput("Enter option: ", 0, 5);
+
+	//input attribute to sort
+	int attribute = Validation::ValidateIntInput("Enter option: ", 0, 4);
+	if (attribute == 0) return;
 	cout << "1. Accending" << endl;
 	cout << "2. Decending" << endl;
 	cout << "0. Back" << endl;
+
+	//input order to sort
 	int order = Validation::ValidateIntInput("Enter option: ", 0, 2);
-	switch (option)
-	{
-	case 1:
-		if(order == 1) inventory->QuickSortByName();
-		else inventory->QuickSortByName();
-		break;
-	case 2:
-		//inventory->SortByName();
-		cout << "Inventory sorted successfully" << endl;
-		break;
-	case 3:
-		//inventory->SortByPrice();
-		cout << "Inventory sorted successfully" << endl;
-		break;
-	case 4:
-		//inventory->SortByQuantity();
-		cout << "Inventory sorted successfully" << endl;
-		break;
-	case 0:
-		return;
-	default:
-		cout << "Invalid input." << endl;
-		break;
-	}
+	if (order == 0) return;
+
+	inventory->QuickSort(attribute, order);
+
+	system("cls");
+	DisplayInventory();
 }
 
 void InventoryManager::AddItem()
@@ -57,7 +43,6 @@ void InventoryManager::AddItem()
 	int quantity = Validation::ValidateIntInput("Enter quantity: ", 1, 1000);
 
 	Item newItem(name, type, price, quantity);
-
 	inventory->AddItem(newItem);
 	
 	cout << "Item added successfully" << endl;
@@ -66,95 +51,72 @@ void InventoryManager::AddItem()
 void InventoryManager::EditItem()
 {
 	DisplaySearchMenu();
-	option = Validation::ValidateIntInput("Enter choice: ", 0, 2);
-	switch (option) {
-	case 1: {
+	int searchOption = Validation::ValidateIntInput("Enter choice: ", 0, 2);
+	if (searchOption == 0) return;
+
+	ItemNode* node = nullptr;
+
+	if(searchOption == 1) {
 		string name = Validation::ValidateStringInput("Enter name: ");
-		ItemNode* node = inventory->SearchByName(name);
-		DisplayAttributeMenu();
-		option = Validation::ValidateIntInput("Enter choice: ", 0, 4);
-		switch (option)
-		{
-		case 1: {
-			node->GetItem().SetName(Validation::ValidateStringInput("Enter new name: "));
-			break;
-		}
-		case 2: {
-			node->GetItem().SetType(Validation::ValidateItemTypeInput("Enter new type (Armor, Consumable, Utility, Weapon): "));
-			break;
-		}
-		case 3: {
-			node->GetItem().SetPrice(Validation::ValidateFloatInput("Enter new price: ", 0.1f, 10000.0f));
-			break;
-		}
-		case 4: {
-			node->GetItem().SetQuantity(Validation::ValidateIntInput("Enter new quantity: ", 1, 1000));
-			break;
-		}
-		case 0: return;
-		default:
-			cout << "Invalid input" << endl;
-			break;
-		}
+		node = inventory->SearchByName(name);
+	}
+	else if(searchOption == 2) {
+		int position = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
+		node = inventory->SearchByPosition(position);
+	}
+	else {
+		cout << "Invalid input" << endl;
+		return;
+	}
+
+	DisplayAttributeMenu();
+	int attributeOption = Validation::ValidateIntInput("Enter choice: ", 0, 4);
+	if (attributeOption == 0) return;
+
+	switch (attributeOption)
+	{
+	case 1: {
+		node->GetItem().SetName(Validation::ValidateStringInput("Enter new name: "));
 		break;
 	}
 	case 2: {
-		int position = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
-		ItemNode* node = inventory->SearchByPosition(position);
-		DisplayAttributeMenu();
-		option = Validation::ValidateIntInput("Enter choice: ", 0, 4);
-		switch (option)
-		{
-		case 1: {
-			node->GetItem().SetName(Validation::ValidateStringInput("Enter new name: "));
-			break;
-		}
-		case 2: {
-			node->GetItem().SetType(Validation::ValidateItemTypeInput("Enter new type (Armor, Consumable, Utility, Weapon): "));
-			break;
-		}
-		case 3: {
-			node->GetItem().SetPrice(Validation::ValidateFloatInput("Enter new price: ", 0.1f, 10000.0f));
-			break;
-		}
-		case 4: {
-			node->GetItem().SetQuantity(Validation::ValidateIntInput("Enter new quantity: ", 1, 1000));
-			break;
-		}
-		case 0: return;
-		default:
-			cout << "Invalid input" << endl;
-			break;
-		}
+		node->GetItem().SetType(Validation::ValidateItemTypeInput("Enter new type (Armor, Consumable, Utility, Weapon): "));
 		break;
 	}
-	case 0: return;
+	case 3: {
+		node->GetItem().SetPrice(Validation::ValidateFloatInput("Enter new price: ", 0.1f, 10000.0f));
+		break;
+	}
+	case 4: {
+		node->GetItem().SetQuantity(Validation::ValidateIntInput("Enter new quantity: ", 1, 1000));
+		break;
+	}
 	default:
 		cout << "Invalid input" << endl;
-		break;
 	}
 }
 
 void InventoryManager::DeleteItem()
 {
 	DisplaySearchMenu();
-	option = Validation::ValidateIntInput("Enter choice: ", 0, 2);
-	switch (option) {
-	case 1: {
-		ItemNode* node = inventory->SearchByName(Validation::ValidateStringInput("Enter name: "));
-		inventory->DeleteItem(node);
-		break;
+	int searchOption = Validation::ValidateIntInput("Enter choice: ", 0, 2);
+	if (searchOption == 0) return;
+	
+	ItemNode* node = nullptr;
+
+	if(searchOption == 1) {
+		string name = Validation::ValidateStringInput("Enter name: ");
+		node = inventory->SearchByName(name);
 	}
-	case 2: {
-		ItemNode* node = inventory->SearchByPosition(Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount()));
-		inventory->DeleteItem(node);
-		break;
+	else if(searchOption == 2) {
+		int position = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
+		node = inventory->SearchByPosition(position);
 	}
-	case 0: return;
-	default:
+	else {
 		cout << "Invalid input" << endl;
-		break;
+		return;
 	}
+	inventory->DeleteItem(node);
 }
 
 void InventoryManager::LoadInventory()
@@ -164,7 +126,7 @@ void InventoryManager::LoadInventory()
 
 void InventoryManager::SaveInventory()
 {
-	inventory->SaveToFile("Inventory2.txt");
+	inventory->SaveToFile("Inventory.txt");
 }
 
 void InventoryManager::DisplaySearchMenu()
@@ -199,64 +161,55 @@ void InventoryManager::DisplayMenu()
 }
 
 void InventoryManager::DisplayMDSHeader() {
-	cout << "***********************************************************************" << endl;
-	cout << endl;
-	cout << "Bachelor of Software Engineering" << endl;
-	cout << "Media Design School" << endl;
-	cout << "Auckland,    New Zealand" << endl;
-	cout << "(c) Year 1 Media Design School" << endl;
-	cout << endl;
-	cout << "Author                  :   Sokveasna Mao" << endl;
-	cout << "Email                   :   maosokveasna48@gmail.com" << endl;
-	cout << "Component code and name :   GD1P02 - Algorithms and Data Structures" << endl;
-	cout << "Description             :   Inventory System and Sorting" << endl;
-	cout << endl;
-	cout << "**************************************************************************" << endl;
-	cout << endl;
+	cout << "***********************************************************************\n\n";
+	cout << "Bachelor of Software Engineering\n";
+	cout << "Media Design School\n";
+	cout << "Auckland,    New Zealand\n";
+	cout << "(c) Year 1 Media Design School\n\n";
+	cout << "Author                  :   Sokveasna Mao\n";
+	cout << "Email                   :   maosokveasna48@gmail.com\n";
+	cout << "Component code and name :   GD1P02 - Algorithms and Data Structures\n";
+	cout << "Description             :   Inventory System and Sorting\n\n";
+	cout << "**************************************************************************\n\n";
 }
 
 void InventoryManager::Run()
 {
-	while (option != 0) {
+	int searchOption = -1;
+	while (searchOption != 0) {
 		DisplayMenu();
-		option = Validation::ValidateIntInput("Enter choice: ", 0, 7);
-		switch (option) {
+
+		searchOption = Validation::ValidateIntInput("Enter choice: ", 0, 7);
+		system("cls");
+		
+		switch (searchOption) {
 		case 1:
-			system("cls");
 			DisplayInventory();
 			break;
 		case 2:
-			system("cls");
 			SortInventory();
 			break;
 		case 3:
-			system("cls");
 			cin.ignore();
 			AddItem();
 			break;
 		case 4:
-			system("cls");
 			EditItem();
 			break;
 		case 5:
-			system("cls");
 			DeleteItem();
 			break;
 		case 6:
-			system("cls");
 			LoadInventory();
 			break;
 		case 7:
-			system("cls");
 			SaveInventory();
 			break;
 		case 0:
-			system("cls");
 			cout << "Yameroe come back" << endl;
 			exit(0);
 		default:
 			cout << "Invalid input. Please try again." << endl;
-			break;
 		}
 	}
 }
