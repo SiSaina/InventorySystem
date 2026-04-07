@@ -19,17 +19,17 @@ void InventoryManager::SortInventory()
 	DisplayAttributeMenu();
 
 	//input attribute to sort
-	int attribute = Validation::ValidateIntInput("Enter option: ", 0, 4);
-	if (attribute == 0) return;
+	int attributeOption = Validation::ValidateIntInput("Enter option: ", 0, 4);
+	if (attributeOption == 0) return;
 	cout << "1. Accending" << endl;
 	cout << "2. Decending" << endl;
 	cout << "0. Back" << endl;
 
 	//input order to sort
-	int order = Validation::ValidateIntInput("Enter option: ", 0, 2);
-	if (order == 0) return;
+	int orderOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
+	if (orderOption == 0) return;
 
-	inventory->QuickSort(attribute, order);
+	inventory->QuickSort(attributeOption, orderOption);
 
 	system("cls");
 	DisplayInventory();
@@ -37,36 +37,43 @@ void InventoryManager::SortInventory()
 
 void InventoryManager::AddItem()
 {
+	DisplayItemPositionMenu();
+	int positionOption = Validation::ValidateIntInput("Enter option: ", 0, 3);
+	if (positionOption == 0) return;
+
 	string name = Validation::ValidateStringInput("Enter name: ");
-	ItemType type = Validation::ValidateItemTypeInput("Enter type (Armor, Consumable, Utility, Weapon): ");
-	float price = Validation::ValidateFloatInput("Enter price: ", 0.1f, 10000.0f);
-	int quantity = Validation::ValidateIntInput("Enter quantity: ", 1, 1000);
+	DisplayItemTypeMenu();
+	ItemType type = Validation::ValidateItemTypeInput("Enter type: ");
+	float price = Validation::ValidateFloatInput("Enter price: ", MIN_PRICE, MAX_PRICE);
+	int quantity = Validation::ValidateIntInput("Enter quantity: ", MIN_QUANTITY, MAX_QUANTITY);
 
 	Item newItem(name, type, price, quantity);
-	inventory->AddItem(newItem);
-	
+
+	if(positionOption == 1) inventory->AddItemToHead(newItem);
+	else if(positionOption == 2) inventory->AddItemToTail(newItem);
+	else {
+		int positionChoice = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
+		inventory->AddItemToBody(newItem, positionChoice);
+	}
+
 	cout << "Item added successfully" << endl;
 }
 
 void InventoryManager::EditItem()
 {
 	DisplaySearchMenu();
-	int searchOption = Validation::ValidateIntInput("Enter choice: ", 0, 2);
+	int searchOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
 	if (searchOption == 0) return;
 
-	ItemNode* node = nullptr;
+	ItemNode* tempNode = nullptr;
 
 	if(searchOption == 1) {
-		string name = Validation::ValidateStringInput("Enter name: ");
-		node = inventory->SearchByName(name);
-	}
-	else if(searchOption == 2) {
-		int position = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
-		node = inventory->SearchByPosition(position);
+		string searchName = Validation::ValidateStringInput("Enter name: ");
+		tempNode = inventory->SearchByName(searchName);
 	}
 	else {
-		cout << "Invalid input" << endl;
-		return;
+		int positionOption = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
+		tempNode = inventory->SearchByPosition(positionOption);
 	}
 
 	DisplayAttributeMenu();
@@ -76,19 +83,20 @@ void InventoryManager::EditItem()
 	switch (attributeOption)
 	{
 	case 1: {
-		node->GetItem().SetName(Validation::ValidateStringInput("Enter new name: "));
+		tempNode->GetItem().SetName(Validation::ValidateStringInput("Enter new name: "));
 		break;
 	}
 	case 2: {
-		node->GetItem().SetType(Validation::ValidateItemTypeInput("Enter new type (Armor, Consumable, Utility, Weapon): "));
+		DisplayItemTypeMenu();
+		tempNode->GetItem().SetType(Validation::ValidateItemTypeInput("Enter new type: "));
 		break;
 	}
 	case 3: {
-		node->GetItem().SetPrice(Validation::ValidateFloatInput("Enter new price: ", 0.1f, 10000.0f));
+		tempNode->GetItem().SetPrice(Validation::ValidateFloatInput("Enter new price: ", MIN_PRICE, MAX_PRICE));
 		break;
 	}
 	case 4: {
-		node->GetItem().SetQuantity(Validation::ValidateIntInput("Enter new quantity: ", 1, 1000));
+		tempNode->GetItem().SetQuantity(Validation::ValidateIntInput("Enter new quantity: ", MIN_QUANTITY, MAX_QUANTITY));
 		break;
 	}
 	default:
@@ -98,25 +106,35 @@ void InventoryManager::EditItem()
 
 void InventoryManager::DeleteItem()
 {
+	DisplayItemPositionMenu();
+	int positionOption = Validation::ValidateIntInput("Enter option: ", 0, 3);
+	if (positionOption == 0) return;
 	DisplaySearchMenu();
-	int searchOption = Validation::ValidateIntInput("Enter choice: ", 0, 2);
+	int searchOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
 	if (searchOption == 0) return;
 	
-	ItemNode* node = nullptr;
+	ItemNode* tempNode = nullptr;
 
 	if(searchOption == 1) {
-		string name = Validation::ValidateStringInput("Enter name: ");
-		node = inventory->SearchByName(name);
+		string searchName = Validation::ValidateStringInput("Enter name: ");
+		tempNode = inventory->SearchByName(searchName);
 	}
 	else if(searchOption == 2) {
-		int position = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
-		node = inventory->SearchByPosition(position);
+		int positionChoice = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
+		tempNode = inventory->SearchByPosition(positionChoice);
 	}
 	else {
 		cout << "Invalid input" << endl;
 		return;
 	}
-	inventory->DeleteItem(node);
+	
+	if (positionOption == 1) inventory->DeleteItemFromHead(tempNode);
+	else if (positionOption == 2) inventory->DeleteItemFromTail(tempNode);
+	else {
+		int positionSelect = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
+		inventory->DeleteItemFromBody(tempNode, positionSelect);
+	}
+
 }
 
 void InventoryManager::LoadInventory()
@@ -127,6 +145,24 @@ void InventoryManager::LoadInventory()
 void InventoryManager::SaveInventory()
 {
 	inventory->SaveToFile("Inventory.txt");
+}
+
+void InventoryManager::DisplayItemPositionMenu()
+{
+	cout << "Operate item by position" << endl;
+	cout << "1. Head" << endl;
+	cout << "2. Tail" << endl;
+	cout << "3. Body" << endl;
+	cout << "0. Back" << endl;
+}
+
+void InventoryManager::DisplayItemTypeMenu()
+{
+	cout << "Item type" << endl;
+	cout << "1. Armor" << endl;
+	cout << "2. Consumable" << endl;
+	cout << "3. Utility" << endl;
+	cout << "4. Weapon" << endl;
 }
 
 void InventoryManager::DisplaySearchMenu()
@@ -190,7 +226,6 @@ void InventoryManager::Run()
 			SortInventory();
 			break;
 		case 3:
-			cin.ignore();
 			AddItem();
 			break;
 		case 4:

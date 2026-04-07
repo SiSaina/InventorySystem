@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <limits>
+#include <functional>
 #include "ItemType.h"
 using namespace std;
 class Validation

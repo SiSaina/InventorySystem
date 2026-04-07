@@ -64,11 +64,7 @@ ItemType Validation::ValidateItemTypeInput(string prompt)
 {
 	int choice = -1;
     while (true) {
-        cout << prompt << endl;
-		cout << "0. Armor" << endl;
-		cout << "1. Consumable" << endl;
-		cout << "2. Utility" << endl;
-        cout << "3. Weapon" << endl;
+        cout << prompt;
         if (!(cin >> choice))
         {
             cout << "Invalid number. Try again.\n";
@@ -76,7 +72,7 @@ ItemType Validation::ValidateItemTypeInput(string prompt)
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             continue;
         }
-        if (choice < 0 || choice > 3)
+        if (choice < 1 || choice > 4)
         {
             cout << "Input must be between 0 and 3." << endl;
             continue;

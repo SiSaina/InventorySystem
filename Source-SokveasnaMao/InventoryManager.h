@@ -5,6 +5,14 @@
 
 using namespace std;
 
+const int MIN_NAME_LENGTH = 1;
+const float MIN_PRICE = 0.1f;
+const int MIN_QUANTITY = 1;
+
+const int MAX_NAME_LENGTH = 50;
+const float MAX_PRICE = 10000.0f;
+const int MAX_QUANTITY = 1000;
+
 class InventoryManager
 {
 private:
@@ -21,6 +29,8 @@ public:
 	void LoadInventory();
 	void SaveInventory();
 
+	void DisplayItemPositionMenu();
+	void DisplayItemTypeMenu();
 	void DisplaySearchMenu();
 	void DisplayAttributeMenu();
 	void DisplayMenu();

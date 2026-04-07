@@ -10,8 +10,14 @@ public:
 	~Inventory();
 
 	void DisplayInventory() const;
-	void AddItem(const Item& item);
-	void DeleteItem(ItemNode* item);
+
+	void AddItemToHead(const Item& item);
+	void AddItemToTail(const Item& item);
+	void AddItemToBody(const Item& item, int position);
+
+	void DeleteItemFromHead(ItemNode* item);
+	void DeleteItemFromTail(ItemNode* item);
+	void DeleteItemFromBody(ItemNode* item, int position);
 
 	ItemNode* SearchByName(string name);
 	ItemNode* SearchByPosition(int position);

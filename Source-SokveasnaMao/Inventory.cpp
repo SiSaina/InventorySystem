@@ -13,14 +13,33 @@ Inventory::~Inventory()
 	delete itemList;
 }
 
-void Inventory::AddItem(const Item& item)
+void Inventory::AddItemToHead(const Item& item)
+{
+	itemList->InsertHead(item);
+}
+
+void Inventory::AddItemToTail(const Item& item)
 {
 	itemList->InsertTail(item);
 }
 
-void Inventory::DeleteItem(ItemNode* item)
+void Inventory::AddItemToBody(const Item& item, int position)
 {
-	int position = itemList->FindNodeByNode(item);
+	itemList->InsertBody(item, position);
+}
+
+void Inventory::DeleteItemFromHead(ItemNode* item)
+{
+	itemList->DeleteHead();
+}
+
+void Inventory::DeleteItemFromTail(ItemNode* item)
+{
+	itemList->DeleteTail();
+}
+
+void Inventory::DeleteItemFromBody(ItemNode* item, int position)
+{
 	itemList->DeleteBody(position);
 }
 
@@ -141,7 +160,7 @@ void Inventory::QuickSortAccending(ItemNode* first, ItemNode* last, int attribut
 {
 	// check if there are nodes to sort
 	// check if first and last are not the same and if they are not adjacent
-	// if they are adjacent, it means there is only one element and it is already sorted
+	// if they are adjacent, if there is only one element, then it is already sorted
 	if (first == nullptr || last == nullptr) return;
 	if (first == last || first == last->GetNext()) return;
 
@@ -226,7 +245,7 @@ void Inventory::LoadFromFile(const string& filename)
 
 		// create item and add it to inventory
 		Item item(name, type, price, quantity);
-		AddItem(item);
+		AddItemToTail(item);
 	};
 
 	file.close();

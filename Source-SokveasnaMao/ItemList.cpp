@@ -48,7 +48,7 @@ void ItemList::InsertTail(Item item)
 	itemSize++;
 }
 
-void ItemList::InsertBody(int position, Item item)
+void ItemList::InsertBody(Item item, int position)
 {
 	if (position < 0 || position > itemSize) { throw "Invalid position"; }
 	if (position == 0) { InsertHead(item); return; }
@@ -175,14 +175,6 @@ ItemNode* ItemList::FindNodeByName(string name) {
 
 int ItemList::NumNodes() const { return itemSize; };
 
-bool ItemList::NodeExistsByPosition(int position)
-{
-	do {
-		if (itemCurrent == GetNode(position)) return true;
-	} while (MoveNext());
-	return true;
-}
-
 void ItemList::DisplayList() {
 	MoveToHead();
 	// set width for each column and left align
@@ -224,29 +216,9 @@ bool ItemList::MoveNext()
 	return true;
 }
 
-bool ItemList::MovePrev() {
-	if (itemCurrent == nullptr) throw "current not set";
-	if (itemCurrent->GetPrev() == nullptr) return false;
-	itemCurrent = itemCurrent->GetPrev();
-	return true;
-}
-
 ItemNode* ItemList::GetCurrent() const
 {
 	if (itemCurrent == nullptr) throw "current not set";
 	return itemCurrent;
 }
 
-bool ItemList::IsHead() const 
-{
-	if (itemCurrent == nullptr) return true;
-	return (itemCurrent->GetPrev() == nullptr);
-}
-
-bool ItemList::IsTail() const
-{
-	if (itemCurrent == nullptr) return true;
-	return (itemCurrent->GetNext() == nullptr);
-}
-
-void ItemList::ResetCurrent() { itemCurrent = nullptr; }
