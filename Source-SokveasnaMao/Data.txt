@@ -1,0 +1,2 @@
+NAME // TYPE // PRICE // QUANTITY
+wqrq // Consumable // 12 // 12

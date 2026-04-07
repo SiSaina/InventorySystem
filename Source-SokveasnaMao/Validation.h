@@ -12,5 +12,6 @@ public:
 	static string ValidateStringInput(string prompt);
 	static float ValidateFloatInput(string prompt, float min, float max);
 	static ItemType ValidateItemTypeInput(string prompt);
+	static bool ValidateFilePath(const string& path);
 };
 

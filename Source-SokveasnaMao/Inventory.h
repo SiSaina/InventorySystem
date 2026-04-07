@@ -36,8 +36,9 @@ public:
 	void QuickSort(int attribute, int order);
 
 	int GetItemCount() const { return itemList->NumNodes(); };
+	void ClearAllNodes();
 
-	void LoadFromFile(const string& filename);
-	void SaveToFile(const string& filename);
+	bool LoadFromFile(const string& filename);
+	bool SaveToFile(const string& filename);
 };
 

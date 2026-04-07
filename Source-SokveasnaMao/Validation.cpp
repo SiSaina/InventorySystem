@@ -81,3 +81,24 @@ ItemType Validation::ValidateItemTypeInput(string prompt)
 		return static_cast<ItemType>(choice);
     }
 }
+
+bool Validation::ValidateFilePath(const string& path)
+{
+    if (path.empty())
+    {
+        cout << "File path cannot be empty. Try again." << endl;
+        return false;
+	}
+
+	size_t invalidChars = path.find_last_of('.');
+    if (invalidChars == string::npos) {
+        cout<< "File path must contain a file extension. Try again." << endl;
+		return false;
+    }
+	string fileExtension = path.substr(invalidChars);
+    for(char& c : fileExtension) {
+		c = static_cast<char>(tolower(c));
+	}
+
+    return fileExtension == ".txt";
+}

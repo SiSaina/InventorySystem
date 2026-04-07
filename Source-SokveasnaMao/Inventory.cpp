@@ -223,14 +223,22 @@ void Inventory::DisplayInventory() const
 	itemList->DisplayList();
 }
 
-void Inventory::LoadFromFile(const string& filename)
+void Inventory::ClearAllNodes()
 {
+	while (itemList->NumNodes() > 0) {
+		itemList->DeleteHead();
+	}
+}
+
+bool Inventory::LoadFromFile(const string& filename)
+{
+	ClearAllNodes();
 	// open file for reading
 	ifstream file(filename);
 	if (!file.is_open())
 	{
 		cout << "Cannot open file: " << filename << endl;
-		return;
+		return false;
 	}
 	// read first line and ignore it since it is the header
 	string line;
@@ -276,7 +284,6 @@ void Inventory::LoadFromFile(const string& filename)
 			// create item and add it to inventory
 			Item item(name, type, price, quantity);
 			AddItemToTail(item);
-
 		}
 		catch (exception& e) {
 			cout << "Error parsing line: " << line << endl;
@@ -284,10 +291,10 @@ void Inventory::LoadFromFile(const string& filename)
 		}
 	};
 	file.close();
-	cout << "Loaded from " << filename << endl;;
+	return true;
 }
 
-void Inventory::SaveToFile(const string& filename)
+bool Inventory::SaveToFile(const string& filename)
 {
 	// open file for writing
 	// if it doesn't exist, create it, if it does exist, overwrite it
@@ -315,6 +322,5 @@ void Inventory::SaveToFile(const string& filename)
 	}
 
 	file.close();
-
-	cout << "Saved to " << filename << endl;;
+	return true;
 }

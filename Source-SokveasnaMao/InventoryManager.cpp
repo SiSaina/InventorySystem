@@ -166,12 +166,36 @@ void InventoryManager::DeleteItem()
 
 void InventoryManager::LoadInventory()
 {
-	inventory->LoadFromFile("Inventory.txt");
+	string filePath;
+	cout << "Enter file path to load inventory: ";
+	getline(cin, filePath);
+	
+	if(!Validation::ValidateFilePath(filePath)) {
+		cout << "Invalid file. Only .txt allow" << endl;
+		return;
+	}
+	if(!inventory->LoadFromFile(filePath)) {
+		cout << "Failed to load inventory from " << filePath << endl;
+		return;
+	}
+	cout << "Inventory loaded successfully from " << filePath << endl;
 }
 
 void InventoryManager::SaveInventory()
 {
-	inventory->SaveToFile("Inventory.txt");
+	string filePath;
+	cout << "Enter file path to save inventory: ";
+	getline(cin, filePath);
+
+	if (!Validation::ValidateFilePath(filePath)) {
+		cout << "Invalid file. Only .txt allow" << endl;
+		return;
+	}
+	if (!inventory->SaveToFile(filePath)) {
+		cout << "Failed to save inventory from " << filePath << endl;
+		return;
+	}
+	cout << "Inventory saved successfully from " << filePath << endl;
 }
 
 void InventoryManager::DisplayItemPositionMenu()
