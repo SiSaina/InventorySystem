@@ -19,6 +19,8 @@ ItemList::~ItemList() {
 void ItemList::InsertHead(Item item)
 {
 	ItemNode* newNode = new ItemNode();
+	if (!newNode) throw ("Memory allocation failed");
+
 	newNode->SetItem(item);
 	newNode->SetNext(itemHead);
 	newNode->SetPrev(nullptr);
@@ -31,6 +33,7 @@ void ItemList::InsertHead(Item item)
 void ItemList::InsertTail(Item item)
 {
 	ItemNode* newNode = new ItemNode();
+	if (!newNode) throw ("Memory allocation failed");
 	newNode->SetItem(item);
 	newNode->SetNext(nullptr);
 	// no list
@@ -50,11 +53,12 @@ void ItemList::InsertTail(Item item)
 
 void ItemList::InsertBody(Item item, int position)
 {
-	if (position < 0 || position > itemSize) { throw "Invalid position"; }
+	if (position < 0 || position > itemSize) { throw "InsertBody: invalid position"; }
 	if (position == 0) { InsertHead(item); return; }
 	if (position == itemSize) { InsertTail(item); return; }
 
 	ItemNode* newNode = new ItemNode();
+	if (!newNode) throw ("Memory allocation failed");
 	newNode->SetItem(item);
 
 	// move current node to second last correct position (if 10, current would be 9)
@@ -77,7 +81,7 @@ void ItemList::InsertBody(Item item, int position)
 
 void ItemList::DeleteHead()
 {
-	if (itemHead == nullptr) throw "No list";
+	if (itemHead == nullptr) throw "DeleteHead: list is empty";
 
 	ItemNode* temp = itemHead;
 	itemHead = itemHead->GetNext();
@@ -91,7 +95,7 @@ void ItemList::DeleteHead()
 
 void ItemList::DeleteTail()
 {
-	if (itemHead == nullptr) throw "No list";
+	if (itemHead == nullptr) throw "DeleteTail: list is empty";
 	if (itemSize == 1) {
 		delete itemHead;
 		itemHead = nullptr;
@@ -114,9 +118,9 @@ void ItemList::DeleteTail()
 void ItemList::DeleteBody(int position)
 {
 	// no list
-	if (itemHead == nullptr) throw "no list";
+	if (itemHead == nullptr) throw "DeleteBody: list is empty";
 	// user enter out of range position
-	if (position < 0 || position >= itemSize) throw "invalid input";
+	if (position < 0 || position >= itemSize) throw "DeleteBody: invalid input";
 	if (itemSize == 1) { DeleteHead(); return; }
 	if (position == 0) { DeleteHead(); return; }
 	if (position == itemSize - 1) { DeleteTail(); return; }
@@ -153,6 +157,17 @@ int ItemList::FindNodeByNode(ItemNode* item)
 		index++;
 	} while (MoveNext());
 	throw "Not found";
+}
+
+bool ItemList::FindExistNodeByPosition(int position)
+{
+	MoveToHead();
+	int index = 0;
+	do {
+		if (itemCurrent == GetNode(position - 1)) return true;
+		index++;
+	} while (MoveNext());
+	return false;
 }
 
 ItemNode* ItemList::FindNodeByPosition(int position)

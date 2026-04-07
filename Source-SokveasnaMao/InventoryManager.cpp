@@ -16,6 +16,10 @@ void InventoryManager::DisplayInventory()
 
 void InventoryManager::SortInventory()
 {
+	if (inventory->GetItemCount() == 0) {
+		cout << "No items to sort" << endl;
+		return;
+	}
 	DisplayAttributeMenu();
 
 	//input attribute to sort
@@ -61,6 +65,10 @@ void InventoryManager::AddItem()
 
 void InventoryManager::EditItem()
 {
+	if(inventory->GetItemCount() == 0) {
+		cout << "No items to edit" << endl;
+		return;
+	}
 	DisplaySearchMenu();
 	int searchOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
 	if (searchOption == 0) return;
@@ -106,35 +114,54 @@ void InventoryManager::EditItem()
 
 void InventoryManager::DeleteItem()
 {
+	if (inventory->GetItemCount() == 0) {
+		cout << "No items to delete" << endl;
+		return;
+	}
 	DisplayItemPositionMenu();
 	int positionOption = Validation::ValidateIntInput("Enter option: ", 0, 3);
 	if (positionOption == 0) return;
-	DisplaySearchMenu();
-	int searchOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
-	if (searchOption == 0) return;
-	
-	ItemNode* tempNode = nullptr;
 
-	if(searchOption == 1) {
-		string searchName = Validation::ValidateStringInput("Enter name: ");
-		tempNode = inventory->SearchByName(searchName);
+	try {
+		if (positionOption == 1) {
+			inventory->DeleteItemFromHead();
+			return;
+		}
+		else if (positionOption == 2) {
+			inventory->DeleteItemFromTail();
+			return;
+		}
+		
+		DisplaySearchMenu();
+		int searchOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
+		if (searchOption == 0) return;
+
+		ItemNode* tempNode = nullptr;
+		int positionChoice = -1;
+
+		if (searchOption == 1) {
+			string searchName = Validation::ValidateStringInput("Enter name: ");
+			tempNode = inventory->SearchByName(searchName);
+			if (!tempNode) {
+				cout << "No item found with name " << searchName << endl;
+				return;
+			}
+			positionChoice = inventory->GetNodePosition(tempNode);
+			inventory->DeleteItemFromBody(positionChoice);
+		}
+		else if (searchOption == 2) {
+			positionChoice = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
+			if (!inventory->FindExistNodeByPosition(positionChoice)) {
+				cout << "No item found at position " << positionChoice << endl;
+				return;
+			}
+			inventory->DeleteItemFromBody(positionChoice);
+		}
 	}
-	else if(searchOption == 2) {
-		int positionChoice = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
-		tempNode = inventory->SearchByPosition(positionChoice);
-	}
-	else {
-		cout << "Invalid input" << endl;
+	catch (exception& e) {
+		cout << "Error: " << e.what() << endl;
 		return;
 	}
-	
-	if (positionOption == 1) inventory->DeleteItemFromHead(tempNode);
-	else if (positionOption == 2) inventory->DeleteItemFromTail(tempNode);
-	else {
-		int positionSelect = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
-		inventory->DeleteItemFromBody(tempNode, positionSelect);
-	}
-
 }
 
 void InventoryManager::LoadInventory()

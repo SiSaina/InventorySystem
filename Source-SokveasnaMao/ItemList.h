@@ -26,6 +26,7 @@ public:
 
 	ItemNode* GetNode(int position) const;
 	int FindNodeByNode(ItemNode* item);
+	bool FindExistNodeByPosition(int position);
 	ItemNode* FindNodeByPosition(int position);
 	ItemNode* FindNodeByName(string name);
 	int NumNodes() const;

@@ -1,6 +1,7 @@
 #pragma once
 #include "ItemList.h"
 #include "Validation.h"
+#include <iostream>
 class Inventory
 {
 private:
@@ -15,12 +16,15 @@ public:
 	void AddItemToTail(const Item& item);
 	void AddItemToBody(const Item& item, int position);
 
-	void DeleteItemFromHead(ItemNode* item);
-	void DeleteItemFromTail(ItemNode* item);
-	void DeleteItemFromBody(ItemNode* item, int position);
+	void DeleteItemFromHead();
+	void DeleteItemFromTail();
+	void DeleteItemFromBody(int position);
 
 	ItemNode* SearchByName(string name);
 	ItemNode* SearchByPosition(int position);
+
+	int GetNodePosition(ItemNode* node) const;
+	bool FindExistNodeByPosition(int position) const;
 
 	void SwapNodes(ItemNode* a, ItemNode* b);
 	bool CompareNode(const Item& a, const Item& b, int attribute, bool order);

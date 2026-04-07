@@ -6,6 +6,7 @@
 Inventory::Inventory()
 {
 	itemList = new ItemList();
+	if (!itemList) throw ("failed to create item list");
 }
 
 Inventory::~Inventory()
@@ -15,47 +16,71 @@ Inventory::~Inventory()
 
 void Inventory::AddItemToHead(const Item& item)
 {
+	if (!itemList) throw "item list not initialized";
 	itemList->InsertHead(item);
 }
 
 void Inventory::AddItemToTail(const Item& item)
 {
+	if (!itemList) throw "item list not initialized";
 	itemList->InsertTail(item);
 }
 
 void Inventory::AddItemToBody(const Item& item, int position)
 {
+	if (!itemList) throw "item list not initialized";
 	itemList->InsertBody(item, position);
 }
 
-void Inventory::DeleteItemFromHead(ItemNode* item)
+void Inventory::DeleteItemFromHead()
 {
+	if (!itemList) throw "item list not initialized";
+	if (itemList->NumNodes() == 0) throw "no items to delete";
 	itemList->DeleteHead();
 }
 
-void Inventory::DeleteItemFromTail(ItemNode* item)
+void Inventory::DeleteItemFromTail()
 {
+	if (!itemList) throw "item list not initialized";
+	if (itemList->NumNodes() == 0) throw "no items to delete";
 	itemList->DeleteTail();
 }
 
-void Inventory::DeleteItemFromBody(ItemNode* item, int position)
+void Inventory::DeleteItemFromBody(int position)
 {
+	if (!itemList) throw "item list not initialized";
+	if (itemList->NumNodes() == 0) throw "no items to delete";
 	itemList->DeleteBody(position);
 }
 
 ItemNode* Inventory::SearchByName(string name)
 {
+	if (itemList->NumNodes() == 0) throw "no items to search";
 	return itemList->FindNodeByName(name);
 }
 
 ItemNode* Inventory::SearchByPosition(int position)
 {
+	if (itemList->NumNodes() == 0) throw "no items to search";
 	return itemList->FindNodeByPosition(position);
+}
+
+int Inventory::GetNodePosition(ItemNode* node) const
+{
+	if (!itemList) throw "item list not initialized";
+	return itemList->FindNodeByNode(node);
+}
+
+bool Inventory::FindExistNodeByPosition(int position) const
+{
+	if (!itemList) throw "item list not initialized";
+	return itemList->FindExistNodeByPosition(position);
 }
 
 // swaping item by pointer
 void Inventory::SwapNodes(ItemNode* a, ItemNode* b) {
-	if (!a || !b) throw "Invalid node";
+	if (!a || !b) throw "SwapNodes: null node";
+	if (a == b) return;
 
 	// store surrounding nodes of a and b
 	ItemNode* prevA = a->GetPrev();
@@ -113,11 +138,12 @@ bool Inventory::CompareNode(const Item& a, const Item& b, int attribute, bool or
 		return order ? a.GetQuantity() > b.GetQuantity() 
 					 : a.GetQuantity() < b.GetQuantity();
 	default:
-		throw "Invalid attribute";
+		throw "invalid attribute for comparison";
 	}
 }
 ItemNode* Inventory::PartitionAccending(ItemNode* first, ItemNode* last, int attribute)
 {
+	if (!first || !last) throw "Partition: null node";
 	// set pivot as last element
 	Item pivot = last->GetItem();
 	// index of first element, it is nullptr
@@ -180,14 +206,16 @@ void Inventory::QuickSortDescending(ItemNode* first, ItemNode* last, int attribu
 
 void Inventory::QuickSort(int attribute, int order)
 {
-	if (itemList == nullptr) throw "no item";
+	if (!itemList) throw "item list not initialized";
+	if (itemList->NumNodes() == 0) throw "no items to sort";
+	if (attribute < 1 || attribute > 4) throw "invalid attribute";
+	if (order != 1 && order != 2) throw "invalid order";
 
 	ItemNode* first = itemList->GetNode(0);
 	ItemNode* last = itemList->GetNode(itemList->NumNodes() - 1);
 
 	if(order == 1) QuickSortAccending(first, last, attribute);
 	else QuickSortDescending(first, last, attribute);
-	cout << endl;
 }
 
 void Inventory::DisplayInventory() const
@@ -201,7 +229,7 @@ void Inventory::LoadFromFile(const string& filename)
 	ifstream file(filename);
 	if (!file.is_open())
 	{
-		cout << "Cannot open: " << filename << endl;
+		cout << "Cannot open file: " << filename << endl;
 		return;
 	}
 	// read first line and ignore it since it is the header
@@ -210,51 +238,59 @@ void Inventory::LoadFromFile(const string& filename)
 
 	// read each line and parse it into an item, then add it to the inventory
 	while(getline(file, line)) {
-		if (line.empty()) continue;
-		string name, typeStr, priceStr, quantityStr;
-		// use stringstream to parse the line, separate by // and space
-		stringstream ss(line);
-		// use getline to read until // and ignore the space after it
-		getline(ss, name, '/');
-		ss.ignore(1);
-		getline(ss, typeStr, '/');
-		ss.ignore(1);
-		getline(ss, priceStr, '/');
-		ss.ignore(1);
-		getline(ss, quantityStr, '/');
+		try {
+			if (line.empty()) continue;
+			string name, typeStr, priceStr, quantityStr;
 
-		// trim whitespace from name
-		// remove all spaces from typeStr, priceStr, and quantityStr
-		name.erase(0, name.find_first_not_of(" "));
-		name.erase(name.find_last_not_of(" ") + 1);
-		typeStr.erase(remove(typeStr.begin(), typeStr.end(), ' '), typeStr.end());
-		priceStr.erase(remove(priceStr.begin(), priceStr.end(), ' '), priceStr.end());
-		quantityStr.erase(remove(quantityStr.begin(), quantityStr.end(), ' '), quantityStr.end());
-		
-		// convert string price to float and stirng quantity to int
-		float price = stof(priceStr);
-		int quantity = stoi(quantityStr);
-		
-		// convert string type to ItemType enum
-		ItemType type;
-		if (typeStr == "Armor") type = Armor;
-		else if (typeStr == "Consumable") type = Consumable;
-		else if (typeStr == "Utility") type = Utility;
-		else if (typeStr == "Weapon") type = Weapon;
-		else throw "Invalid item type";
+			// use stringstream to parse the line, separate by // and space
+			stringstream ss(line);
+			// use getline to read until // and ignore the space after it
+			getline(ss, name, '/');
+			ss.ignore(1);
+			getline(ss, typeStr, '/');
+			ss.ignore(1);
+			getline(ss, priceStr, '/');
+			ss.ignore(1);
+			getline(ss, quantityStr, '/');
 
-		// create item and add it to inventory
-		Item item(name, type, price, quantity);
-		AddItemToTail(item);
+			// trim whitespace from name
+			// remove all spaces from typeStr, priceStr, and quantityStr
+			name.erase(0, name.find_first_not_of(" "));
+			name.erase(name.find_last_not_of(" ") + 1);
+			typeStr.erase(remove(typeStr.begin(), typeStr.end(), ' '), typeStr.end());
+			priceStr.erase(remove(priceStr.begin(), priceStr.end(), ' '), priceStr.end());
+			quantityStr.erase(remove(quantityStr.begin(), quantityStr.end(), ' '), quantityStr.end());
+		
+			// convert string price to float and stirng quantity to int
+			float price = stof(priceStr);
+			int quantity = stoi(quantityStr);
+		
+			// convert string type to ItemType enum
+			ItemType type;
+			if (typeStr == "Armor") type = Armor;
+			else if (typeStr == "Consumable") type = Consumable;
+			else if (typeStr == "Utility") type = Utility;
+			else if (typeStr == "Weapon") type = Weapon;
+			else throw "Invalid item type";
+
+			// create item and add it to inventory
+			Item item(name, type, price, quantity);
+			AddItemToTail(item);
+
+		}
+		catch (exception& e) {
+			cout << "Error parsing line: " << line << endl;
+			cout << "Error message: " << e.what() << endl;
+		}
 	};
-
 	file.close();
 	cout << "Loaded from " << filename << endl;;
 }
 
 void Inventory::SaveToFile(const string& filename)
 {
-	// open file for writing, if it doesn't exist, create it, if it does exist, overwrite it
+	// open file for writing
+	// if it doesn't exist, create it, if it does exist, overwrite it
 	ofstream file(filename);
 
 	// check if file is open, if not, throw an error
