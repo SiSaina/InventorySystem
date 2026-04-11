@@ -71,12 +71,6 @@ int Inventory::GetNodePosition(ItemNode* node) const
 	return itemList->FindNodeByNode(node);
 }
 
-bool Inventory::FindExistNodeByPosition(int position) const
-{
-	if (!itemList) throw "item list not initialized";
-	return itemList->FindExistNodeByPosition(position);
-}
-
 // swaping item by pointer
 void Inventory::SwapNodes(ItemNode* a, ItemNode* b) {
 	if (!a || !b) throw "SwapNodes: null node";

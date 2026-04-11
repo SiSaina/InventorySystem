@@ -31,8 +31,6 @@ public:
 
 	// find the position of a node, return position, and -1 if not found
 	int GetNodePosition(ItemNode* node) const;
-	// find if a node exist by position, return true if found, otherwise return false
-	bool FindExistNodeByPosition(int position) const;
 
 	// swap two whole nodes by their pointers, not by their values
 	void SwapNodes(ItemNode* a, ItemNode* b);

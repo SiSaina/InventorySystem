@@ -150,11 +150,8 @@ void InventoryManager::DeleteItem()
 			inventory->DeleteItemFromBody(positionChoice);
 		}
 		else if (searchOption == 2) {
+			// no need to check position exist since it is already checked in ValidateIntInput
 			positionChoice = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
-			if (!inventory->FindExistNodeByPosition(positionChoice)) {
-				cout << "No item found at position " << positionChoice << endl;
-				return;
-			}
 			inventory->DeleteItemFromBody(positionChoice);
 		}
 	}
