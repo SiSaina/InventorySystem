@@ -29,15 +29,10 @@ public:
 	bool DeleteTail();
 	bool DeleteBody(int position);
 
-	// get item node by position, return the node, return nullptr if position not exist
-	ItemNode* GetNode(int position) const;
-	// find item node by node, return the position of the node, return -1 if node not exist
-	int FindNodeByNode(ItemNode* item);
+	ItemNode* GetNodeByPosition(int position);
+	ItemNode* GetNodeByName(string name);
+	int GetNodeByNode(ItemNode* item);
 
-	// check if item node exists by position, return the node if exists, nullptr otherwise
-	ItemNode* FindNodeByPosition(int position);
-	// check if item node exists by name, return the node if exists, nullptr otherwise
-	ItemNode* FindNodeByName(string name);
 	// get number of item nodes in the list
 	int NumNodes() const;
 	// display item list
@@ -48,7 +43,5 @@ public:
 	void MoveCurrentNodeToTail();
 	bool MoveCurrentNodeNext();
 	bool MoveCurrentNodePrev();
-	// get current item node, return nullptr if current node is nullptr
-	ItemNode* GetCurrent() const;
 };
 

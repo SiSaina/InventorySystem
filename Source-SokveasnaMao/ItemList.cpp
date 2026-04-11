@@ -72,7 +72,6 @@ bool ItemList::InsertBody(Item item, int position)
 	}
 
 	ItemNode* newNode = new ItemNode();
-
 	newNode->SetItem(item);
 
 	// move current node to second last correct position (if 10, current would be 9)
@@ -182,31 +181,7 @@ bool ItemList::DeleteBody(int position)
 	return true;
 }
 
-ItemNode* ItemList::GetNode(int position) const
-{
-	if (position < 0 || position >= itemSize) {
-		cout << "Invalid input" << endl;
-		return nullptr;
-	}
-	ItemNode* newNode = itemHead;
-	for (int i = 0;i < position;i++) newNode = newNode->GetNext();
-	return newNode;
-}
-
-int ItemList::FindNodeByNode(ItemNode* item) 
-{
-	MoveCurrentNodeToHead();
-	int index = 0;
-	
-	while(itemCurrent != nullptr) {
-		if (item == itemCurrent) return index;
-		index++;
-		MoveCurrentNodeNext();
-	}
-	return -1;
-}
-
-ItemNode* ItemList::FindNodeByPosition(int position)
+ItemNode* ItemList::GetNodeByPosition(int position)
 {
 	// move current node to next until match with position
 	if (position < 0 || position >= itemSize) {
@@ -219,19 +194,31 @@ ItemNode* ItemList::FindNodeByPosition(int position)
 		for (int i = 0;i < position;i++) MoveCurrentNodeNext();
 	} else {
 		MoveCurrentNodeToTail();
-		for (int i = itemSize - 1;i > position;i--) itemCurrent = itemCurrent->GetPrev();
+		for (int i = itemSize - 1;i > position;i--) MoveCurrentNodePrev();
 	}
 	return itemCurrent;
 }
 
-ItemNode* ItemList::FindNodeByName(string name) {
+ItemNode* ItemList::GetNodeByName(string name) {
 	MoveCurrentNodeToHead();
 	do {
 		if (itemCurrent->GetItem().GetName() == name) return itemCurrent;
 	} while (MoveCurrentNodeNext());
-	throw "Not found";
+	return nullptr;
 }
 
+int ItemList::GetNodeByNode(ItemNode* item)
+{
+	MoveCurrentNodeToHead();
+	int index = 0;
+
+	while (itemCurrent != nullptr) {
+		if (item == itemCurrent) return index;
+		index++;
+		MoveCurrentNodeNext();
+	}
+	return -1;
+}
 int ItemList::NumNodes() const { return itemSize; };
 
 void ItemList::DisplayList() {
@@ -267,22 +254,13 @@ void ItemList::MoveCurrentNodeToTail()
 bool ItemList::MoveCurrentNodeNext()
 {
 	if (itemCurrent == nullptr) return false;
-	if (itemCurrent->GetNext() == nullptr)	return false;
 
 	itemCurrent = itemCurrent->GetNext();
 	return true;
 }
 bool ItemList::MoveCurrentNodePrev() {
-	if (itemCurrent == nullptr) return false;
-	if (itemCurrent->GetPrev() == nullptr) return false;
+	if (itemCurrent) return false;
 
 	itemCurrent = itemCurrent->GetPrev();
 	return true;
 }
-
-ItemNode* ItemList::GetCurrent() const
-{
-	if (itemCurrent == nullptr) throw "current not set";
-	return itemCurrent;
-}
-

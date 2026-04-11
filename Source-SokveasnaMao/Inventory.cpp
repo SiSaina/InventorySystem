@@ -6,7 +6,6 @@
 Inventory::Inventory()
 {
 	itemList = new ItemList();
-	if (!itemList) throw ("failed to create item list");
 }
 
 Inventory::~Inventory()
@@ -14,61 +13,82 @@ Inventory::~Inventory()
 	delete itemList;
 }
 
-void Inventory::AddItemToHead(const Item& item)
+bool Inventory::AddItemToHead(const Item& item)
 {
 	if (!itemList) throw "item list not initialized";
 	itemList->InsertHead(item);
+	return true;
 }
 
-void Inventory::AddItemToTail(const Item& item)
+bool Inventory::AddItemToTail(const Item& item)
 {
 	if (!itemList) throw "item list not initialized";
 	itemList->InsertTail(item);
+	return true;
 }
 
-void Inventory::AddItemToBody(const Item& item, int position)
+bool Inventory::AddItemToBody(const Item& item, int position)
 {
 	if (!itemList) throw "item list not initialized";
 	itemList->InsertBody(item, position);
+	return true;
 }
 
-void Inventory::DeleteItemFromHead()
+bool Inventory::DeleteItemFromHead()
 {
 	if (!itemList) throw "item list not initialized";
-	if (itemList->NumNodes() == 0) throw "no items to delete";
+	if (itemList->NumNodes() == 0) {
+		cout << "DeleteItemFromHead: no items to delete" << endl;
+		return false;
+	}
 	itemList->DeleteHead();
+	return true;
 }
 
-void Inventory::DeleteItemFromTail()
+bool Inventory::DeleteItemFromTail()
 {
 	if (!itemList) throw "item list not initialized";
-	if (itemList->NumNodes() == 0) throw "no items to delete";
+	if (itemList->NumNodes() == 0) {
+		cout << "DeleteItemFromTail: no items to delete" << endl;
+		return false;
+	}
 	itemList->DeleteTail();
+	return true;
 }
 
-void Inventory::DeleteItemFromBody(int position)
+bool Inventory::DeleteItemFromBody(int position)
 {
 	if (!itemList) throw "item list not initialized";
-	if (itemList->NumNodes() == 0) throw "no items to delete";
+	if (itemList->NumNodes() == 0) {
+		cout << "DeleteItemFromBody: no items to delete" << endl;
+		return false;
+	}
 	itemList->DeleteBody(position);
+	return true;
 }
 
 ItemNode* Inventory::SearchByName(string name)
 {
-	if (itemList->NumNodes() == 0) throw "no items to search";
-	return itemList->FindNodeByName(name);
+	if (itemList->NumNodes() == 0) {
+		cout << "SearchByName: no items to search" << endl;
+		return nullptr;
+	}
+	return itemList->GetNodeByName(name);
 }
 
 ItemNode* Inventory::SearchByPosition(int position)
 {
-	if (itemList->NumNodes() == 0) throw "no items to search";
-	return itemList->FindNodeByPosition(position);
+	if (itemList->NumNodes() == 0) {
+		cout << "SearchByPosition: no items to search" << endl;
+		return nullptr;
+	}
+	return itemList->GetNodeByPosition(position);
 }
 
 int Inventory::GetNodePosition(ItemNode* node) const
 {
 	if (!itemList) throw "item list not initialized";
-	return itemList->FindNodeByNode(node);
+	return itemList->GetNodeByNode(node);
 }
 
 // swaping item by pointer
@@ -198,15 +218,24 @@ void Inventory::QuickSortDescending(ItemNode* first, ItemNode* last, int attribu
 	QuickSortDescending(pivot->GetNext(), last, attribute);
 }
 
-void Inventory::QuickSort(int attribute, int order)
+bool Inventory::QuickSort(int attribute, int order)
 {
 	if (!itemList) throw "item list not initialized";
-	if (itemList->NumNodes() == 0) throw "no items to sort";
-	if (attribute < 1 || attribute > 4) throw "invalid attribute";
-	if (order != 1 && order != 2) throw "invalid order";
+	if (itemList->NumNodes() == 0) {
+		cout << "QuickSort: no items to sort" << endl;
+		return false;
+	}
+	if (attribute < 1 || attribute > 4) {
+		cout << "QuickSort: invalid attribute" << endl;
+		return false;
+	}
+	if (order != 1 && order != 2) {
+		cout << "QuickSort: invalid order" << endl;
+		return false;
+	}
 
-	ItemNode* first = itemList->GetNode(0);
-	ItemNode* last = itemList->GetNode(itemList->NumNodes() - 1);
+	ItemNode* first = itemList->GetNodeByPosition(0);
+	ItemNode* last = itemList->GetNodeByPosition(itemList->NumNodes() - 1);
 
 	if(order == 1) QuickSortAccending(first, last, attribute);
 	else QuickSortDescending(first, last, attribute);
@@ -215,6 +244,11 @@ void Inventory::QuickSort(int attribute, int order)
 void Inventory::DisplayInventory() const
 {
 	itemList->DisplayList();
+}
+
+int Inventory::GetItemCount() const
+{
+	return itemList->NumNodes();
 }
 
 void Inventory::ClearAllNodes()
@@ -273,7 +307,10 @@ bool Inventory::LoadFromFile(const string& filename)
 			else if (typeStr == "Consumable") type = Consumable;
 			else if (typeStr == "Utility") type = Utility;
 			else if (typeStr == "Weapon") type = Weapon;
-			else throw "Invalid item type";
+			else { 
+				cout << "Warning: Invalid item type in line " << line << ", defaulting to Utility" << endl;
+				type = Utility;
+			}
 
 			// create item and add it to inventory
 			Item item(name, type, price, quantity);
@@ -296,12 +333,13 @@ bool Inventory::SaveToFile(const string& filename)
 
 	// check if file is open, if not, throw an error
 	if(!file.is_open()) {
-		throw "Could not open file";
+		cout << "Could not open file" << endl;
+		return false;
 	}
 
 	// write header
 	file << "NAME // TYPE // PRICE // QUANTITY" << endl;
-	ItemNode* temp = itemList->GetNode(0);
+	ItemNode* temp = itemList->GetNodeByPosition(0);
 	// write each item to file, separate by // and space
 	while (temp != nullptr)
 	{

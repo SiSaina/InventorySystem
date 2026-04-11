@@ -16,14 +16,14 @@ public:
 	void DisplayInventory() const;
 
 	// add doublely linked list node to inventory at the head, tail, or body
-	void AddItemToHead(const Item& item);
-	void AddItemToTail(const Item& item);
-	void AddItemToBody(const Item& item, int position);
+	bool AddItemToHead(const Item& item);
+	bool AddItemToTail(const Item& item);
+	bool AddItemToBody(const Item& item, int position);
 
 	// delete doublely linked list node from inventory at the head, tail, or body
-	void DeleteItemFromHead();
-	void DeleteItemFromTail();
-	void DeleteItemFromBody(int position);
+	bool DeleteItemFromHead();
+	bool DeleteItemFromTail();
+	bool DeleteItemFromBody(int position);
 	
 	// search for a node by name or position, return the node if found, otherwise return nullptr
 	ItemNode* SearchByName(string name);
@@ -45,10 +45,10 @@ public:
 	// quicksort the list by the given attribute and order, order = 1 for accending, 2 for decending
 	void QuickSortAccending(ItemNode* first, ItemNode* last, int attribute);
 	void QuickSortDescending(ItemNode* first, ItemNode* last, int attribute);
-	void QuickSort(int attribute, int order);
+	bool QuickSort(int attribute, int order);
 
 	// get the number of items in the inventory
-	int GetItemCount() const { return itemList->NumNodes(); };
+	int GetItemCount() const;
 	// clear all nodes in the inventory, used for loading from file
 	void ClearAllNodes();
 

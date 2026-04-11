@@ -108,14 +108,14 @@ void InventoryManager::EditItem()
 		break;
 	}
 	default:
-		cout << "Invalid input" << endl;
+		cout << "EditItem: Invalid input" << endl;
 	}
 }
 
 void InventoryManager::DeleteItem()
 {
 	if (inventory->GetItemCount() == 0) {
-		cout << "No items to delete" << endl;
+		cout << "DeleteItem: No items to delete" << endl;
 		return;
 	}
 	DisplayItemPositionMenu();
@@ -143,7 +143,7 @@ void InventoryManager::DeleteItem()
 			string searchName = Validation::ValidateStringInput("Enter name: ");
 			tempNode = inventory->SearchByName(searchName);
 			if (!tempNode) {
-				cout << "No item found with name " << searchName << endl;
+				cout << "DeleteItem: No item found with name " << searchName << endl;
 				return;
 			}
 			positionChoice = inventory->GetNodePosition(tempNode);
@@ -177,11 +177,11 @@ void InventoryManager::LoadInventory()
 	}
 	
 	if(!Validation::ValidateFilePath(filePath)) {
-		cout << "Invalid file. Only .txt allow" << endl;
+		cout << "LoadInventory: Invalid file. Only .txt allow" << endl;
 		return;
 	}
 	if(!inventory->LoadFromFile(filePath)) {
-		cout << "Failed to load inventory from " << filePath << endl;
+		cout << "LoadInventory: Failed to load inventory from " << filePath << endl;
 		return;
 	}
 	cout << "Inventory loaded successfully from " << filePath << endl;
@@ -204,11 +204,11 @@ void InventoryManager::SaveInventory()
 	}
 
 	if (!Validation::ValidateFilePath(filePath)) {
-		cout << "Invalid file. Only .txt allow" << endl;
+		cout << "SaveInventory: Invalid file. Only .txt allow" << endl;
 		return;
 	}
 	if (!inventory->SaveToFile(filePath)) {
-		cout << "Failed to save inventory from " << filePath << endl;
+		cout << "SaveInventory: Failed to save inventory to " << filePath << endl;
 		return;
 	}
 	cout << "Inventory saved successfully from " << filePath << endl;
