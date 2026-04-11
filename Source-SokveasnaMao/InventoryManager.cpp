@@ -166,9 +166,18 @@ void InventoryManager::DeleteItem()
 
 void InventoryManager::LoadInventory()
 {
+	DisplayFileMenu();
+	int pathOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
+	if (pathOption == 0) return;
+
 	string filePath;
-	cout << "Enter file path to load inventory: ";
-	getline(cin, filePath);
+
+	if (pathOption == 1) {
+		cout << "Enter file path to load inventory: ";
+		getline(cin, filePath);
+	}else if(pathOption == 2) {
+		filePath = "Inventory.txt";
+	}
 	
 	if(!Validation::ValidateFilePath(filePath)) {
 		cout << "Invalid file. Only .txt allow" << endl;
@@ -183,9 +192,19 @@ void InventoryManager::LoadInventory()
 
 void InventoryManager::SaveInventory()
 {
+	DisplayFileMenu();
+	int pathOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
+	if (pathOption == 0) return;
+
 	string filePath;
-	cout << "Enter file path to save inventory: ";
-	getline(cin, filePath);
+
+	if (pathOption == 1) {
+		cout << "Enter file path to save inventory: ";
+		getline(cin, filePath);
+	}
+	else if (pathOption == 2) {
+		filePath = "Inventory.txt";
+	}
 
 	if (!Validation::ValidateFilePath(filePath)) {
 		cout << "Invalid file. Only .txt allow" << endl;
@@ -196,6 +215,13 @@ void InventoryManager::SaveInventory()
 		return;
 	}
 	cout << "Inventory saved successfully from " << filePath << endl;
+}
+
+void InventoryManager::DisplayFileMenu()
+{
+	cout << "1. Specific path" << endl;
+	cout << "2. Default" << endl;
+	cout << "0. Back" << endl;
 }
 
 void InventoryManager::DisplayItemPositionMenu()
