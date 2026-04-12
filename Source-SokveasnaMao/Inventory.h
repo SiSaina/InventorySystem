@@ -32,11 +32,15 @@ public:
 	// find the position of a node, return position, and -1 if not found
 	int GetNodePosition(ItemNode* node) const;
 
+	pair<ItemNode*, ItemNode*> FindNode(ItemNode*& head, Item* X, Item* Y);
+
 	// swap two whole nodes by their pointers, not by their values
 	void SwapNodes(ItemNode* a, ItemNode* b);
-
+	void SwapNodesByRelinking(ItemNode* n1, ItemNode* n2);
+	void SwapNodesByPointer(ItemNode*& a, ItemNode*& b, Item* X, Item* Y);
+	static void SwapNodesData(ItemNode* a, ItemNode* b);
 	// compare two nodes by their attributes, return true if a should be before b, otherwise return false
-	bool CompareNode(const Item& a, const Item& b, int attribute, bool order);
+	bool CompareNode(const Item a, const Item b, int attribute, bool order);
 
 	// partition the list for quicksort, return the pivot node
 	ItemNode* PartitionAccending(ItemNode* first, ItemNode* last, int attribute);
@@ -45,6 +49,7 @@ public:
 	// quicksort the list by the given attribute and order, order = 1 for accending, 2 for decending
 	void QuickSortAccending(ItemNode* first, ItemNode* last, int attribute);
 	void QuickSortDescending(ItemNode* first, ItemNode* last, int attribute);
+	// quicksort the list by the given attribute and order, return true if successful, otherwise return false
 	bool QuickSort(int attribute, int order);
 
 	// get the number of items in the inventory

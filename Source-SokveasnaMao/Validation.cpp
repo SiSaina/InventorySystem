@@ -20,7 +20,6 @@ int Validation::ValidateIntInput(string prompt, int min, int max)
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         return value;
     }
-
 }
 
 string Validation::ValidateStringInput(string prompt)
@@ -74,7 +73,7 @@ ItemType Validation::ValidateItemTypeInput(string prompt)
         }
         if (choice < 1 || choice > 4)
         {
-            cout << "Input must be between 0 and 3." << endl;
+            cout << "Input must be between 1 and 4." << endl;
             continue;
         }
         cin.ignore(numeric_limits<streamsize>::max(), '\n');

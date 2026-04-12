@@ -64,11 +64,11 @@ bool ItemList::InsertBody(Item item, int position)
 	}
 	if (position == 0) { 
 		InsertHead(item); 
-		return false; 
+		return true; 
 	}
 	if (position == itemSize) { 
 		InsertTail(item); 
-		return false; 
+		return true; 
 	}
 
 	ItemNode* newNode = new ItemNode();
@@ -254,13 +254,19 @@ void ItemList::MoveCurrentNodeToTail()
 bool ItemList::MoveCurrentNodeNext()
 {
 	if (itemCurrent == nullptr) return false;
-
+	if (itemCurrent->GetNext() == nullptr) {
+		itemCurrent = nullptr;
+		return false;
+	}
 	itemCurrent = itemCurrent->GetNext();
 	return true;
 }
 bool ItemList::MoveCurrentNodePrev() {
-	if (itemCurrent) return false;
-
+	if (itemCurrent == nullptr) return false;
+	if(itemCurrent->GetPrev() == nullptr) {
+		itemCurrent = nullptr;
+		return false;
+	}
 	itemCurrent = itemCurrent->GetPrev();
 	return true;
 }

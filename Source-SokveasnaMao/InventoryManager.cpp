@@ -11,28 +11,37 @@ InventoryManager::~InventoryManager()
 
 void InventoryManager::DisplayInventory()
 {
+	// check if inventory is empty, if it is, display message and return
+	if(inventory->GetItemCount() == 0) {
+		cout << "DisplayInventory: Inventory is empty" << endl;
+		return;
+	}
 	inventory->DisplayInventory();
 }
 
 void InventoryManager::SortInventory()
 {
+	// check if inventory is empty, if it is, display message and return
 	if (inventory->GetItemCount() == 0) {
-		cout << "No items to sort" << endl;
+		cout << "SortInventory: No items to sort" << endl;
 		return;
 	}
+
+	// display attribute menu (name, type, price, quantity)
 	DisplayAttributeMenu();
 
 	//input attribute to sort
 	int attributeOption = Validation::ValidateIntInput("Enter option: ", 0, 4);
 	if (attributeOption == 0) return;
+	// display order menu (accending, decending)
 	cout << "1. Accending" << endl;
 	cout << "2. Decending" << endl;
 	cout << "0. Back" << endl;
-
 	//input order to sort
 	int orderOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
 	if (orderOption == 0) return;
 
+	// perform the function quicksort
 	inventory->QuickSort(attributeOption, orderOption);
 
 	system("cls");
@@ -41,23 +50,31 @@ void InventoryManager::SortInventory()
 
 void InventoryManager::AddItem()
 {
+	// display head, tail, body menu and input position to add
 	DisplayItemPositionMenu();
 	int positionOption = Validation::ValidateIntInput("Enter option: ", 0, 3);
 	if (positionOption == 0) return;
 
+	// input item attributes
 	string name = Validation::ValidateStringInput("Enter name: ");
 	DisplayItemTypeMenu();
 	ItemType type = Validation::ValidateItemTypeInput("Enter type: ");
 	float price = Validation::ValidateFloatInput("Enter price: ", MIN_PRICE, MAX_PRICE);
 	int quantity = Validation::ValidateIntInput("Enter quantity: ", MIN_QUANTITY, MAX_QUANTITY);
 
+	// create new item
 	Item newItem(name, type, price, quantity);
-
+	
+	// perform function to add item
+	// add to head, tail or body by position, if position not exist, display error message
 	if(positionOption == 1) inventory->AddItemToHead(newItem);
 	else if(positionOption == 2) inventory->AddItemToTail(newItem);
 	else {
-		int positionChoice = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
-		inventory->AddItemToBody(newItem, positionChoice);
+		int positionChoice = Validation::ValidateIntInput("Enter position: ", 1, inventory->GetItemCount());
+		// no need to check position exist since it is already checked in ValidateIntInput
+		// positionChoice - 1 because the user interface start from 1
+		// but the inventory is start from 0
+		inventory->AddItemToBody(newItem, positionChoice - 1);
 	}
 
 	cout << "Item added successfully" << endl;
@@ -65,8 +82,9 @@ void InventoryManager::AddItem()
 
 void InventoryManager::EditItem()
 {
+	// check if inventory is empty, if it is, display message and return
 	if(inventory->GetItemCount() == 0) {
-		cout << "No items to edit" << endl;
+		cout << "EditItem: No items to edit" << endl;
 		return;
 	}
 	DisplaySearchMenu();
@@ -151,8 +169,10 @@ void InventoryManager::DeleteItem()
 		}
 		else if (searchOption == 2) {
 			// no need to check position exist since it is already checked in ValidateIntInput
-			positionChoice = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
-			inventory->DeleteItemFromBody(positionChoice);
+			positionChoice = Validation::ValidateIntInput("Enter position: ", 1, inventory->GetItemCount());
+			// positionChoice - 1 because the user interface start from 1
+			// but the inventory is start from 0
+			inventory->DeleteItemFromBody(positionChoice - 1);
 		}
 	}
 	catch (exception& e) {
@@ -173,7 +193,7 @@ void InventoryManager::LoadInventory()
 		cout << "Enter file path to load inventory: ";
 		getline(cin, filePath);
 	}else if(pathOption == 2) {
-		filePath = "Inventory.txt";
+		filePath = "Data.txt";
 	}
 	
 	if(!Validation::ValidateFilePath(filePath)) {
@@ -189,6 +209,10 @@ void InventoryManager::LoadInventory()
 
 void InventoryManager::SaveInventory()
 {
+	if(inventory->GetItemCount() == 0) {
+		cout << "SaveInventory: No items to save" << endl;
+		return;
+	}
 	DisplayFileMenu();
 	int pathOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
 	if (pathOption == 0) return;
@@ -315,7 +339,7 @@ void InventoryManager::Run()
 			SaveInventory();
 			break;
 		case 0:
-			cout << "Yameroe come back" << endl;
+			cout << "Exiting program..." << endl;
 			exit(0);
 		default:
 			cout << "Invalid input. Please try again." << endl;

@@ -91,99 +91,276 @@ int Inventory::GetNodePosition(ItemNode* node) const
 	return itemList->GetNodeByNode(node);
 }
 
+pair<ItemNode*, ItemNode*> Inventory::FindNode(ItemNode*& head, Item* X, Item* Y)
+{
+	ItemNode* N1 = NULL;
+	ItemNode* N2 = NULL;
+	ItemNode* temp = head;
+
+	// Traversing the list
+	while (temp != NULL) {
+		if (temp->GetItem().GetName() == X->GetName())
+			N1 = temp;
+		else if (temp->GetItem().GetName() == Y->GetName())
+			N2 = temp;
+		temp = temp->GetNext();
+	}
+	return make_pair(N1, N2);
+}
+
 // swaping item by pointer
 void Inventory::SwapNodes(ItemNode* a, ItemNode* b) {
+	// check if a and b are not null and not the same node
 	if (!a || !b) throw "SwapNodes: null node";
 	if (a == b) return;
 
 	// store surrounding nodes of a and b
 	ItemNode* prevA = a->GetPrev();
 	ItemNode* nextA = a->GetNext();
-	
 	ItemNode* prevB = b->GetPrev();
 	ItemNode* nextB = b->GetNext();
 
 	// case 1: if a is directly before b
+	// then we only need to update the next and prev of a and b, and the surrounding nodes of a and b
 	if(nextA == b) {
+		// if prevA is not null, set its next to b
+		if (prevA) prevA->SetNext(b);
+		// if nextB is not null, set its prev to a
+		if (nextB) nextB->SetPrev(a);
+		
 		a->SetNext(nextB);
 		a->SetPrev(b);
 		b->SetNext(a);
 		b->SetPrev(prevA);
-		if (prevA) prevA->SetNext(b);
-		if (nextB) nextB->SetPrev(a);
 	}
 	// case 2: if b is directly before a
+	// then we only need to update the next and prev of a and b, and the surrounding nodes of a and b
 	else if (nextB == a) {
+		// if prevB is not null, set its next to a
+		if (prevB) prevB->SetNext(a);
+		// if nextA is not null, set its prev to b
+		if (nextA) nextA->SetPrev(b);
 		b->SetNext(nextA);
 		b->SetPrev(a);
 		a->SetNext(b);
 		a->SetPrev(prevB);
-		if (prevB) prevB->SetNext(a);
-		if (nextA) nextA->SetPrev(b);
 	}
 	// case 3: if a and b are not adjacent
+	// then we need to update the next and prev of a and b, and the surrounding nodes of a and b
 	else {
+		// if prevA is not null, set its next to b
+		if (prevA) prevA->SetNext(b);
+		// if nextA is not null, set its prev to b
+		if (nextA) nextA->SetPrev(b);
+		// if prevB is not null, set its next to a
+		if (prevB) prevB->SetNext(a);
+		// if nextB is not null, set its prev to a
+		if (nextB) nextB->SetPrev(a);
+
 		a->SetNext(nextB);
 		a->SetPrev(prevB);
 		b->SetNext(nextA);
 		b->SetPrev(prevA);
-		if (prevA) prevA->SetNext(b);
-		if (nextA) nextA->SetPrev(b);
-		if (prevB) prevB->SetNext(a);
-		if (nextB) nextB->SetPrev(a);
 	}
+	// update head of the list if a or b is the head
 	if(itemList->GetHead() == a) itemList->SetHead(b);
 	else if (itemList->GetHead() == b) itemList->SetHead(a);
+	
+	// update tail
+	if (itemList->GetTail() == a) itemList->SetTail(b);
+	else if (itemList->GetTail() == b) itemList->SetTail(a);
+
+	// fix boundaries
+	if (itemList->GetHead()) itemList->GetHead()->SetPrev(nullptr);
+
+	if (itemList->GetTail()) itemList->GetTail()->SetNext(nullptr);
 }
-bool Inventory::CompareNode(const Item& a, const Item& b, int attribute, bool order) {
+void Inventory::SwapNodesByRelinking(ItemNode* n1, ItemNode* n2)
+{
+	if (!n1 || !n2 || n1 == n2) return;
+
+	// Save neighbors
+	ItemNode* n1Prev = n1->GetPrev();
+	ItemNode* n1Next = n1->GetNext();
+	ItemNode* n2Prev = n2->GetPrev();
+	ItemNode* n2Next = n2->GetNext();
+	// Case: n1 directly before n2
+	if (n1->GetNext() == n2)
+	{
+		ItemNode* prev = n1->GetPrev();
+		ItemNode* next = n2->GetNext();
+
+		if (prev) prev->SetNext(n2);
+		else itemList->SetHead(n2);
+
+		if (next) next->SetPrev(n1);
+		else itemList->SetTail(n1);
+
+		n2->SetPrev(prev);
+		n2->SetNext(n1);
+
+		n1->SetPrev(n2);
+		n1->SetNext(next);
+
+		return;
+	}
+
+	// Case: n2 directly before n1
+	if (n2->GetNext() == n1)
+	{
+		ItemNode* prev = n2->GetPrev();
+		ItemNode* next = n1->GetNext();
+
+		if (prev) prev->SetNext(n1);
+		else itemList->SetHead(n1);
+
+		if (next) next->SetPrev(n2);
+		else itemList->SetTail(n2);
+
+		n1->SetPrev(prev);
+		n1->SetNext(n2);
+
+		n2->SetPrev(n1);
+		n2->SetNext(next);
+
+		return;
+	}
+	// --- DETACH n1 ---
+	if (n1Prev) n1Prev->SetNext(n1Next);
+	else itemList->SetHead(n1Next);
+
+	if (n1Next) n1Next->SetPrev(n1Prev);
+	else itemList->SetTail(n1Prev);
+
+	// --- DETACH n2 ---
+	if (n2Prev) n2Prev->SetNext(n2Next);
+	else itemList->SetHead(n2Next);
+
+	if (n2Next) n2Next->SetPrev(n2Prev);
+	else itemList->SetTail(n2Prev);
+
+	// --- INSERT n1 into n2's original position ---
+	n1->SetPrev(n2Prev);
+	n1->SetNext(n2Next);
+
+	if (n2Prev) n2Prev->SetNext(n1);
+	else itemList->SetHead(n1);
+
+	if (n2Next) n2Next->SetPrev(n1);
+	else itemList->SetTail(n1);
+
+	// --- INSERT n2 into n1's original position ---
+	n2->SetPrev(n1Prev);
+	n2->SetNext(n1Next);
+
+	if (n1Prev) n1Prev->SetNext(n2);
+	else itemList->SetHead(n2);
+
+	if (n1Next) n1Next->SetPrev(n2);
+	else itemList->SetTail(n2);
+}
+void Inventory::SwapNodesByPointer(ItemNode*& a, ItemNode*& b, Item* X, Item* Y)
+{
+	// check if a and b are not null and not the same node
+	if (!a || !b) throw "SwapNodesByPointer: null node";
+	if (a == b) return;
+	if (a == NULL || a->GetNext() == NULL || X == Y) return;
+
+	pair<ItemNode*, ItemNode*> nodes = FindNode(a, X, Y);
+
+	ItemNode* node1 = nodes.first;
+	ItemNode* node2 = nodes.second;
+
+	if(node1 == a) a = node2;
+	else if (node2 == a) a = node1;
+	if(node1 == b) b = node2;
+	else if (node2 == b) b = node1;
+
+	ItemNode* temp;
+	temp = node1->GetNext();
+	node1->SetNext(node2->GetNext());
+	node2->SetNext(temp);
+
+	if (node1->GetNext() != NULL)
+		node1->GetNext()->SetPrev(node1);
+	if (node2->GetNext() != NULL)
+		node2->GetNext()->SetPrev(node2);
+
+	temp = node1->GetPrev();
+	node1->SetPrev(node2->GetPrev());
+	node2->SetPrev(temp);
+	if (node1->GetPrev() != NULL)
+		node1->GetPrev()->SetNext(node1);
+	if (node2->GetPrev() != NULL)
+		node2->GetPrev()->SetNext(node2);
+}
+
+void Inventory::SwapNodesData(ItemNode* a, ItemNode* b)
+{
+	Item temp = a->GetItem();
+	a->SetItem(b->GetItem());
+	b->SetItem(temp);
+}
+
+bool Inventory::CompareNode(const Item a, const Item b, int attribute, bool order) {
 	// order = true for accending, false for decending
 	// attribute: 1 for name, 2 for type, 3 for price, 4 for quantity
 	switch (attribute) {
 	case 1: 
-		return order ? a.GetName() > b.GetName() 
-					 : a.GetName() < b.GetName();
+		return order ? a.GetName() < b.GetName() 
+					 : a.GetName() > b.GetName();
 	case 2:
-		return order ? a.GetType() > b.GetType() 
-					 : a.GetType() < b.GetType();
+		return order ? a.GetType() < b.GetType() 
+					 : a.GetType() > b.GetType();
 	case 3:
-		return order ? a.GetPrice() > b.GetPrice() 
-					 : a.GetPrice() < b.GetPrice();
+		return order ? a.GetPrice() < b.GetPrice() 
+					 : a.GetPrice() > b.GetPrice();
 	case 4:
-		return order ? a.GetQuantity() > b.GetQuantity() 
-					 : a.GetQuantity() < b.GetQuantity();
+		return order ? a.GetQuantity() < b.GetQuantity() 
+					 : a.GetQuantity() > b.GetQuantity();
 	default:
 		throw "invalid attribute for comparison";
 	}
 }
 ItemNode* Inventory::PartitionAccending(ItemNode* first, ItemNode* last, int attribute)
 {
+	// check if first and last are not null
 	if (!first || !last) throw "Partition: null node";
+
 	// set pivot as last element
 	Item pivot = last->GetItem();
 	// index of first element, it is nullptr
 	ItemNode* i = first->GetPrev();
 
+	// loop through the list from first to last
+	// if the current element is smaller than or equal to the pivot
+	// move the index of smaller element and swap it with the current element
 	for(ItemNode* j = first; j != last; j = j->GetNext()) {
+		// store next node of j since it might be swapped with i and lose the reference to the next node
 		if (CompareNode(j->GetItem(), pivot, attribute, true)) {
 			// move i to the next position and swap it with j
 			i = (i == nullptr) ? first : i->GetNext();
-			SwapNodes(i, j);
+
+			SwapNodesByPointer(i, j, &i->GetItem(), &j->GetItem());
 		}
 	}
 
 	// move i to the current pivot position and swap it with the pivot
 	i = (i == nullptr) ? first : i->GetNext();
 
-	SwapNodes(i, last);
+	SwapNodesByPointer(i, last, &i->GetItem(), &last->GetItem());
+
 	return i;
 }
 
 ItemNode* Inventory::PartitionDescending(ItemNode* first, ItemNode* last, int attribute)
-{
+{	
+	if (!first || !last) throw "Partition: null node";
 	Item pivot = last->GetItem();
 	ItemNode* i = first->GetPrev();
 
 	for (ItemNode* j = first; j != last; j = j->GetNext()) {
+		if (!j) throw "Partition: null node in loop";
 		if (CompareNode(j->GetItem(), pivot, attribute, false)) {
 			i = (i == nullptr) ? first : i->GetNext();
 			SwapNodes(i, j);
@@ -205,9 +382,13 @@ void Inventory::QuickSortAccending(ItemNode* first, ItemNode* last, int attribut
 	if (first == last || first == last->GetNext()) return;
 
 	ItemNode* pivot = PartitionAccending(first, last, attribute);
+
+	// recursively sort the left pivot
 	QuickSortAccending(first, pivot->GetPrev(), attribute);
+	// recursively sort the right pivot
 	QuickSortAccending(pivot->GetNext(), last, attribute);
 }
+
 void Inventory::QuickSortDescending(ItemNode* first, ItemNode* last, int attribute)
 {
 	if (first == nullptr || last == nullptr) return;

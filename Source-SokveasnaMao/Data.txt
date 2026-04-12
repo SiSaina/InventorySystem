@@ -1,2 +1,7 @@
 NAME // TYPE // PRICE // QUANTITY
-wqrq // Consumable // 12 // 12
+Bag of Cats // Utility // 50 // 1
+Claw Blade // Weapon // 0.2 // 2
+Antimagic Oil // Consumable // 1300 // 3
+Zerk // Consumable // 2 // 1
+Darkwood Shield // Armor // 44 // 1
+

@@ -15,9 +15,12 @@ public:
 	// get item head and current node
 	ItemNode* GetHead() const { return itemHead; };
 	ItemNode* GetCurrentNode() const { return itemCurrent; };
+	ItemNode* GetTail() const { return itemTail; };
 
 	// set item head node
 	void SetHead(ItemNode* head) { itemHead = head; };
+	void SetCurrentNode(ItemNode* current) { itemCurrent = current; };
+	void SetTail(ItemNode* tail) { itemTail = tail; };
 
 	// insert doubly linked list node, head, tail, and body
 	bool InsertHead(Item item);
