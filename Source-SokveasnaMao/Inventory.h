@@ -3,10 +3,8 @@
 #include "Validation.h"
 #include <fstream>
 #include <sstream>
-#include <filesystem>
 class Inventory
 {
-	// function header is a header that tell what the function is used for and what parameters it takes, and the result
 private:
 	ItemList itemList;
 public:

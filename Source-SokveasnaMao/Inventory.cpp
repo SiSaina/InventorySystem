@@ -73,7 +73,6 @@ int Inventory::GetNodePosition(ItemNode* node)
 	return itemList.GetNodeByNode(node);
 }
 
-
 // +++++++++++++++++++++++++++++++++++++++
 // quicksort and quicksort helper function
 // +++++++++++++++++++++++++++++++++++++++
@@ -218,14 +217,14 @@ ItemNode* Inventory::PartitionDescending(ItemNode* first, ItemNode* last, int at
 			// if current element is >= pivot (for descending order)
 			if (CompareNode(j->GetItem(), pivot, attribute, false)) {
 				i = (i == nullptr) ? first : i->GetNext();
-				SwapNodes(i, j);
+				SwapNodesData(i, j);
 			}
 			j = nextJ;
 		}
 
 		i = (i == nullptr) ? first : i->GetNext();
 
-		SwapNodes(i, last);
+		SwapNodesData(i, last);
 		return i;
 	}
 	catch (exception& e) {
@@ -270,17 +269,14 @@ void Inventory::QuickSortDescending(ItemNode* first, ItemNode* last, int attribu
 }
 bool Inventory::QuickSort(int attribute, int order)
 {
-	// check if list is empty
 	if (itemList.NumNodes() == 0) {
 		cout << "QuickSort: no items to sort" << endl;
 		return false;
 	}
-	// validate attribute (must be between 1 and 4)
 	if (attribute < 1 || attribute > 4) {
 		cout << "QuickSort: invalid attribute" << endl;
 		return false;
 	}
-	// validate order (1 = ascending, 2 = descending)
 	if (order != 1 && order != 2) {
 		cout << "QuickSort: invalid order" << endl;
 		return false;
@@ -313,7 +309,6 @@ bool Inventory::LoadFromFile(const string& filename)
 	// clear current inventory before loading new data
 	ClearAllNodes();
 
-	// open file for reading
 	ifstream file(filename);
 
 	if (!file.is_open())
@@ -366,7 +361,6 @@ bool Inventory::LoadFromFile(const string& filename)
 				type = Utility;
 			}
 
-			// create item object and add it to inventory
 			Item item(name, type, price, quantity);
 			AddItemToTail(item);
 		}
@@ -386,13 +380,11 @@ bool Inventory::SaveToFile(const string& filename)
 	// if it doesn't exist, create it, if it does exist, overwrite it
 	ofstream file(filename);
 
-	// check if file is open, if not, throw an error
 	if(!file.is_open()) {
 		cout << "Could not open file" << endl;
 		return false;
 	}
 
-	// write header
 	file << "NAME // TYPE // PRICE // QUANTITY" << endl;
 	ItemNode* temp = itemList.GetHead();
 	// write each item to file, separate by // and space
@@ -405,7 +397,6 @@ bool Inventory::SaveToFile(const string& filename)
 			<< item.GetPrice() << " // "
 			<< item.GetQuantity()
 			<< endl;
-		// move to next node
 		temp = temp->GetNext();
 	}
 
