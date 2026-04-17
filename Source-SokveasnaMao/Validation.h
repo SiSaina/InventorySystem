@@ -3,6 +3,7 @@
 #include <string>
 #include <limits>
 #include <functional>
+#include <algorithm>
 #include "ItemType.h"
 using namespace std;
 class Validation
@@ -34,5 +35,8 @@ public:
 	// prompt: message shown to user
 	// return valid file path, or error message
 	static bool ValidateFilePath(const string& path);
+
+	// convert string to lowercase
+	static string ToLower(string value);
 };
 

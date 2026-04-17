@@ -33,6 +33,9 @@ string Validation::ValidateStringInput(string prompt)
             cout << "Input cannot be empty. Try again.\n";
             continue;
         }
+
+        // convert to lowercase
+        transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return tolower(c); });
         return value;
 	}
 }
@@ -77,7 +80,7 @@ ItemType Validation::ValidateItemTypeInput(string prompt)
             continue;
         }
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-		return static_cast<ItemType>(choice);
+		return static_cast<ItemType>(choice - 1);
     }
 }
 
@@ -100,4 +103,10 @@ bool Validation::ValidateFilePath(const string& path)
 	}
 
     return fileExtension == ".txt";
+}
+
+string Validation::ToLower(string value)
+{
+    transform(value.begin(), value.end(), value.begin(), [](unsigned char c) { return tolower(c); });
+    return value;
 }

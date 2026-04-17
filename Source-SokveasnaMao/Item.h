@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <string>
 #include "ItemType.h"
 using namespace std;
@@ -11,38 +10,19 @@ private:
 	float price;
 	int quantity;
 public:
-	Item() {
-		name = "Unknown";
-		type = Armor;
-		price = 0.0f;
-		quantity = 0;
-	}
-	Item(string name, ItemType type, float price, int quantity) {
-		this->name = name;
-		this->type = type;
-		this->price = price;
-		this->quantity = quantity;
-	};
+	Item();
+	Item(string name, ItemType type, float price, int quantity);
 
-	// get function
-	string GetName() const { return name; };
-	ItemType GetType() const { return type; };
-	// get type return as string
-	string GetTypeString() const {
-		switch (type) {
-		case Armor: return "Armor";
-		case Consumable: return "Consumable";
-		case Utility: return "Utility";
-		case Weapon: return "Weapon";
-		default: return "Unknown";
-		}
-	};
-	float GetPrice() const { return price; };
-	int GetQuantity() const { return quantity; };
-	
-	// set function
-	void SetName(string name) { this->name = name; };
-	void SetType(ItemType type) { this->type = type; };
-	void SetPrice(float price) { this->price = price; };
-	void SetQuantity(int quantity) { this->quantity = quantity; };
+	// Getters
+	string GetName() const;
+	ItemType GetType() const;
+	string GetTypeString() const;
+	float GetPrice() const;
+	int GetQuantity() const;
+
+	// Setters
+	void SetName(string name);
+	void SetType(ItemType type);
+	void SetPrice(float price);
+	void SetQuantity(int quantity);
 };

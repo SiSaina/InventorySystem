@@ -30,14 +30,20 @@ void InventoryManager::SortInventory()
 
 		//input attribute to sort
 		int attributeOption = Validation::ValidateIntInput("Enter option: ", 0, 4);
-		if (attributeOption == 0) return;
+		if (attributeOption == 0) {
+			ClearScreen();
+			return;
+		}
 		// display order menu (accending, decending)
 		cout << "1. Accending" << endl;
 		cout << "2. Decending" << endl;
 		cout << "0. Back" << endl;
 		//input order to sort
 		int orderOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
-		if (orderOption == 0) return;
+		if (orderOption == 0) {
+			ClearScreen();
+			return;
+		}
 
 		// perform the function quicksort
 		inventory.QuickSort(attributeOption, orderOption);
@@ -57,7 +63,10 @@ void InventoryManager::AddItem()
 		// Ask where to insert item (head, tail, body)
 		DisplayItemPositionMenu();
 		int positionOption = Validation::ValidateIntInput("Enter option: ", 0, 3);
-		if (positionOption == 0) return;
+		if (positionOption == 0) {
+			ClearScreen();
+			return;
+		}
 
 		// input item detail from user
 		string name = Validation::ValidateStringInput("Enter name: ");
@@ -73,7 +82,7 @@ void InventoryManager::AddItem()
 		if (positionOption == 1) inventory.AddItemToHead(newItem);
 		else if (positionOption == 2) inventory.AddItemToTail(newItem);
 		else {
-			int positionChoice = Validation::ValidateIntInput("Enter position: ", 1, inventory.GetItemCount());
+			int positionChoice = Validation::ValidateIntInput("Enter position: ", 1, inventory.GetItemCount() + 1);
 			// no need to check position exist since it is already checked in ValidateIntInput
 			// positionChoice - 1 because the user interface start from 1
 			// but the inventory is start from 0
@@ -101,7 +110,10 @@ void InventoryManager::EditItem()
 		// Choose search method
 		DisplaySearchMenu();
 		int searchOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
-		if (searchOption == 0) return;
+		if (searchOption == 0) {
+			ClearScreen();
+			return;
+		}
 
 		ItemNode* tempNode = nullptr;
 
@@ -112,21 +124,24 @@ void InventoryManager::EditItem()
 		}
 		// search by position
 		else {
-			int positionOption = Validation::ValidateIntInput("Enter position: ", 0, inventory.GetItemCount());
-			tempNode = inventory.SearchByPosition(positionOption);
+			int positionOption = Validation::ValidateIntInput("Enter position: ", 1, inventory.GetItemCount() + 1);
+			tempNode = inventory.SearchByPosition(positionOption - 1);
 		}
 
 		// if not found
 		if (tempNode == nullptr) {
 			ClearScreen();
-			cout << "Not found" << endl;
+			cout << "Item not found" << endl;
 			return;
 		}
 
 		// Choose which attribute to edit
 		DisplayAttributeMenu();
 		int attributeOption = Validation::ValidateIntInput("Enter choice: ", 0, 4);
-		if (attributeOption == 0) return;
+		if (attributeOption == 0) {
+			ClearScreen();
+			return;
+		}
 
 		tempNode->DisplayNode();
 		// Update selected attribute
@@ -175,17 +190,22 @@ void InventoryManager::DeleteItem()
 		// choose delete position (head, tail, or body)
 		DisplayItemPositionMenu();
 		int positionOption = Validation::ValidateIntInput("Enter option: ", 0, 3);
-		if (positionOption == 0) return;
+		if (positionOption == 0) {
+			ClearScreen();
+			return;
+		}
 
 		// delete from head
 		if (positionOption == 1) {
 			inventory.DeleteItemFromHead();
+			ClearScreen();
 			cout << "Item Delete successfully" << endl;
 			return;
 		}
 		// delete from tail
 		else if (positionOption == 2) {
 			inventory.DeleteItemFromTail();
+			ClearScreen();
 			cout << "Item Delete successfully" << endl;
 			return;
 		}
@@ -193,7 +213,10 @@ void InventoryManager::DeleteItem()
 		// delete from body (need search)
 		DisplaySearchMenu();
 		int searchOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
-		if (searchOption == 0) return;
+		if (searchOption == 0) {
+			ClearScreen();
+			return;
+		}
 
 		ItemNode* tempNode = nullptr;
 		int positionChoice = -1;
@@ -213,7 +236,7 @@ void InventoryManager::DeleteItem()
 		// search by position
 		else if (searchOption == 2) {
 			// no need to check position exist since it is already checked in ValidateIntInput
-			positionChoice = Validation::ValidateIntInput("Enter position: ", 1, inventory.GetItemCount());
+			positionChoice = Validation::ValidateIntInput("Enter position: ", 1, inventory.GetItemCount() + 1);
 			tempNode = inventory.SearchByPosition(positionChoice - 1);
 			if (!tempNode) {
 				cout << "DeleteItem: No item found at position " << positionChoice << endl;
@@ -238,7 +261,10 @@ void InventoryManager::LoadInventory()
 		// display specific or default file menu
 		DisplayFileMenu();
 		int pathOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
-		if (pathOption == 0) return;
+		if (pathOption == 0) {
+			ClearScreen();
+			return;
+		}
 
 		string filePath;
 
@@ -262,6 +288,7 @@ void InventoryManager::LoadInventory()
 			cout << "LoadInventory: Failed to load inventory from " << filePath << endl;
 			return;
 		}
+		ClearScreen();
 		cout << "Inventory loaded successfully from " << filePath << endl;
 	}
 	catch (exception& e) {
@@ -281,7 +308,10 @@ void InventoryManager::SaveInventory()
 
 		DisplayFileMenu();
 		int pathOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
-		if (pathOption == 0) return;
+		if (pathOption == 0) {
+			ClearScreen();
+			return;
+		}
 
 		string filePath;
 
@@ -305,6 +335,7 @@ void InventoryManager::SaveInventory()
 			cout << "SaveInventory: Failed to save inventory to " << filePath << endl;
 			return;
 		}
+		ClearScreen();
 		cout << "Inventory saved successfully from " << filePath << endl;
 	}
 	catch (exception& e) {

@@ -125,7 +125,9 @@
   <ItemGroup>
     <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="InventoryManager.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemList.cpp" />
+    <ClCompile Include="ItemNode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Validation.cpp" />
   </ItemGroup>

@@ -1,5 +1,4 @@
 #include "ItemList.h"
-#include <iomanip>
 
 // constructor
 ItemList::ItemList() {
@@ -300,7 +299,7 @@ ItemNode* ItemList::GetNodeByName(string name) {
 	// iterate all node and check matching name, return node, if not return nullptr
 	MoveCurrentNodeToHead();
 	while (itemCurrent != nullptr) {
-		if (itemCurrent->GetItem().GetName() == name) return itemCurrent;
+		if (Validation::ToLower(itemCurrent->GetItem().GetName()) == Validation::ToLower(name)) return itemCurrent;
 		MoveCurrentNodeNext();
 	}
 	return nullptr;

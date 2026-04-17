@@ -1,7 +1,9 @@
 #pragma once
 #include "ItemList.h"
 #include "Validation.h"
-#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
 class Inventory
 {
 	// function header is a header that tell what the function is used for and what parameters it takes, and the result

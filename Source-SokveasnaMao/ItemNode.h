@@ -1,5 +1,6 @@
 #pragma once
 #include "Item.h"
+#include <iostream>
 class ItemNode
 {
 private:
@@ -7,34 +8,19 @@ private:
 	ItemNode* next;
 	ItemNode* prev;
 public:
-	ItemNode() {
-		item = Item();
-		next = nullptr;
-		prev = nullptr;
-	};
-	~ItemNode() {
-		next = nullptr;
-		prev = nullptr;
-	};
+	ItemNode();
+	~ItemNode();
 
 	// use & to pass by reference, and directly modification
-	Item& GetItem() { return item; };
+	Item& GetItem();
 	// read-only access
-	const Item& GetItem() const { return item; };
+	const Item& GetItem() const;
+	ItemNode* GetNext() const;
+	ItemNode* GetPrev() const;
 
-	ItemNode* GetNext() const { return next; };
-	ItemNode* GetPrev() const { return prev; };
+	void SetItem(Item& item);
+	void SetNext(ItemNode* next);
+	void SetPrev(ItemNode* prev);
 
-	void SetItem(Item& item) { this->item = item; };
-	void SetNext(ItemNode* next) { this->next = next; };
-	void SetPrev(ItemNode* prev) { this->prev = prev; };
-
-	void DisplayNode() const {
-		cout << "------------------------" << endl;
-		cout << "Name     : " << item.GetName() << endl;
-		cout << "Type     : " << item.GetTypeString() << endl;
-		cout << "Price    : " << item.GetPrice() << endl;
-		cout << "Quantity : " << item.GetQuantity() << endl;
-		cout << "------------------------" << endl;
-	}
+	void DisplayNode() const;
 };
