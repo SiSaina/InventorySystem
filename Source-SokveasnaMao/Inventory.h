@@ -6,48 +6,44 @@ class Inventory
 {
 	// function header is a header that tell what the function is used for and what parameters it takes, and the result
 private:
-	ItemList* itemList;
+	ItemList itemList;
 public:
-	// constructor and destructor
-	Inventory();
-	~Inventory();
+	// call function in itemlist to display inventory in table form
+	void DisplayInventory();
 
-	// display inventory
-	void DisplayInventory() const;
-
-	// add doublely linked list node to inventory at the head, tail, or body
+	// add node to inventory at the head, tail, or body
 	bool AddItemToHead(const Item& item);
 	bool AddItemToTail(const Item& item);
 	bool AddItemToBody(const Item& item, int position);
 
-	// delete doublely linked list node from inventory at the head, tail, or body
+	// delete node from inventory at the head, tail, or body
 	bool DeleteItemFromHead();
 	bool DeleteItemFromTail();
 	bool DeleteItemFromBody(int position);
 	
-	// search for a node by name or position, return the node if found, otherwise return nullptr
-	ItemNode* SearchByName(string name);
+	// search for a node by name or position, return the node if found, if not return nullptr
+	// pass by reference to avoid copying string
+	ItemNode* SearchByName(const string& name);
 	ItemNode* SearchByPosition(int position);
 
-	// find the position of a node, return position, and -1 if not found
-	int GetNodePosition(ItemNode* node) const;
+	// find the position of a node, return position, if not return -1
+	int GetNodePosition(ItemNode* node);
 
-	pair<ItemNode*, ItemNode*> FindNode(ItemNode*& head, Item* X, Item* Y);
-
-	// swap two whole nodes by their pointers, not by their values
+	// swap two nodes by their pointers
 	void SwapNodes(ItemNode* a, ItemNode* b);
-	void SwapNodesByRelinking(ItemNode* n1, ItemNode* n2);
-	void SwapNodesByPointer(ItemNode*& a, ItemNode*& b, Item* X, Item* Y);
+	// swap two nodes by values
 	static void SwapNodesData(ItemNode* a, ItemNode* b);
 	// compare two nodes by their attributes, return true if a should be before b, otherwise return false
 	bool CompareNode(const Item a, const Item b, int attribute, bool order);
 
-	// partition the list for quicksort, return the pivot node
-	ItemNode* PartitionAccending(ItemNode* first, ItemNode* last, int attribute);
+	// partition the list for quicksort
+	// take first node, and last node
+	// return the pivot node
+	ItemNode* PartitionAscending(ItemNode* first, ItemNode* last, int attribute);
 	ItemNode* PartitionDescending(ItemNode* first, ItemNode* last, int attribute);
 
 	// quicksort the list by the given attribute and order, order = 1 for accending, 2 for decending
-	void QuickSortAccending(ItemNode* first, ItemNode* last, int attribute);
+	void QuickSortAscending(ItemNode* first, ItemNode* last, int attribute);
 	void QuickSortDescending(ItemNode* first, ItemNode* last, int attribute);
 	// quicksort the list by the given attribute and order, return true if successful, otherwise return false
 	bool QuickSort(int attribute, int order);

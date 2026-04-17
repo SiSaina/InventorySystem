@@ -23,8 +23,11 @@ public:
 		this->price = price;
 		this->quantity = quantity;
 	};
+
+	// get function
 	string GetName() const { return name; };
 	ItemType GetType() const { return type; };
+	// get type return as string
 	string GetTypeString() const {
 		switch (type) {
 		case Armor: return "Armor";
@@ -36,6 +39,8 @@ public:
 	};
 	float GetPrice() const { return price; };
 	int GetQuantity() const { return quantity; };
+	
+	// set function
 	void SetName(string name) { this->name = name; };
 	void SetType(ItemType type) { this->type = type; };
 	void SetPrice(float price) { this->price = price; };

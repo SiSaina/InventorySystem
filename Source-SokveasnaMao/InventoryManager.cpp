@@ -1,155 +1,196 @@
 #include "InventoryManager.h"
 
-InventoryManager::InventoryManager() {
-	inventory = new Inventory();
-}
-
-InventoryManager::~InventoryManager()
-{
-	delete inventory;
-}
-
 void InventoryManager::DisplayInventory()
 {
-	// check if inventory is empty, if it is, display message and return
-	if(inventory->GetItemCount() == 0) {
-		cout << "DisplayInventory: Inventory is empty" << endl;
+	try {
+		// check if inventory is empty
+		if (inventory.GetItemCount() == 0) {
+			cout << "DisplayInventory: Inventory is empty" << endl;
+			return;
+		}
+		inventory.DisplayInventory();
+	}
+	catch (exception& e) {
+		cout << "Display Inventory Error: " << e.what() << endl;
 		return;
 	}
-	inventory->DisplayInventory();
 }
 
 void InventoryManager::SortInventory()
 {
-	// check if inventory is empty, if it is, display message and return
-	if (inventory->GetItemCount() == 0) {
-		cout << "SortInventory: No items to sort" << endl;
+	try {
+		// check if inventory is empty
+		if (inventory.GetItemCount() == 0) {
+			cout << "SortInventory: No items to sort" << endl;
+			return;
+		}
+
+		// display attribute menu (name, type, price, quantity)
+		DisplayAttributeMenu();
+
+		//input attribute to sort
+		int attributeOption = Validation::ValidateIntInput("Enter option: ", 0, 4);
+		if (attributeOption == 0) return;
+		// display order menu (accending, decending)
+		cout << "1. Accending" << endl;
+		cout << "2. Decending" << endl;
+		cout << "0. Back" << endl;
+		//input order to sort
+		int orderOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
+		if (orderOption == 0) return;
+
+		// perform the function quicksort
+		inventory.QuickSort(attributeOption, orderOption);
+
+		ClearScreen();
+		DisplayInventory();
+	}
+	catch (exception& e) {
+		cout << "Sort Inventory Error: " << e.what() << endl;
 		return;
 	}
-
-	// display attribute menu (name, type, price, quantity)
-	DisplayAttributeMenu();
-
-	//input attribute to sort
-	int attributeOption = Validation::ValidateIntInput("Enter option: ", 0, 4);
-	if (attributeOption == 0) return;
-	// display order menu (accending, decending)
-	cout << "1. Accending" << endl;
-	cout << "2. Decending" << endl;
-	cout << "0. Back" << endl;
-	//input order to sort
-	int orderOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
-	if (orderOption == 0) return;
-
-	// perform the function quicksort
-	inventory->QuickSort(attributeOption, orderOption);
-
-	system("cls");
-	DisplayInventory();
 }
 
 void InventoryManager::AddItem()
 {
-	// display head, tail, body menu and input position to add
-	DisplayItemPositionMenu();
-	int positionOption = Validation::ValidateIntInput("Enter option: ", 0, 3);
-	if (positionOption == 0) return;
+	try {
+		// Ask where to insert item (head, tail, body)
+		DisplayItemPositionMenu();
+		int positionOption = Validation::ValidateIntInput("Enter option: ", 0, 3);
+		if (positionOption == 0) return;
 
-	// input item attributes
-	string name = Validation::ValidateStringInput("Enter name: ");
-	DisplayItemTypeMenu();
-	ItemType type = Validation::ValidateItemTypeInput("Enter type: ");
-	float price = Validation::ValidateFloatInput("Enter price: ", MIN_PRICE, MAX_PRICE);
-	int quantity = Validation::ValidateIntInput("Enter quantity: ", MIN_QUANTITY, MAX_QUANTITY);
+		// input item detail from user
+		string name = Validation::ValidateStringInput("Enter name: ");
+		DisplayItemTypeMenu();
+		ItemType type = Validation::ValidateItemTypeInput("Enter type: ");
+		float price = Validation::ValidateFloatInput("Enter price: ", MIN_PRICE, MAX_PRICE);
+		int quantity = Validation::ValidateIntInput("Enter quantity: ", MIN_QUANTITY, MAX_QUANTITY);
 
-	// create new item
-	Item newItem(name, type, price, quantity);
-	
-	// perform function to add item
-	// add to head, tail or body by position, if position not exist, display error message
-	if(positionOption == 1) inventory->AddItemToHead(newItem);
-	else if(positionOption == 2) inventory->AddItemToTail(newItem);
-	else {
-		int positionChoice = Validation::ValidateIntInput("Enter position: ", 1, inventory->GetItemCount());
-		// no need to check position exist since it is already checked in ValidateIntInput
-		// positionChoice - 1 because the user interface start from 1
-		// but the inventory is start from 0
-		inventory->AddItemToBody(newItem, positionChoice - 1);
+		// create new item
+		Item newItem(name, type, price, quantity);
+
+		// add to head, tail or body by position, if position not exist, display error message
+		if (positionOption == 1) inventory.AddItemToHead(newItem);
+		else if (positionOption == 2) inventory.AddItemToTail(newItem);
+		else {
+			int positionChoice = Validation::ValidateIntInput("Enter position: ", 1, inventory.GetItemCount());
+			// no need to check position exist since it is already checked in ValidateIntInput
+			// positionChoice - 1 because the user interface start from 1
+			// but the inventory is start from 0
+			inventory.AddItemToBody(newItem, positionChoice - 1);
+		}
+
+		ClearScreen();
+		cout << "Item added successfully" << endl;
 	}
-
-	cout << "Item added successfully" << endl;
+	catch (exception& e) {
+		cout << "Add Item Error: " << e.what() << endl;
+		return;
+	}
 }
 
 void InventoryManager::EditItem()
 {
-	// check if inventory is empty, if it is, display message and return
-	if(inventory->GetItemCount() == 0) {
-		cout << "EditItem: No items to edit" << endl;
+	try {
+		// check if inventory is empty
+		if (inventory.GetItemCount() == 0) {
+			cout << "EditItem: No items to edit" << endl;
+			return;
+		}
+
+		// Choose search method
+		DisplaySearchMenu();
+		int searchOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
+		if (searchOption == 0) return;
+
+		ItemNode* tempNode = nullptr;
+
+		//search by name
+		if (searchOption == 1) {
+			string searchName = Validation::ValidateStringInput("Enter name: ");
+			tempNode = inventory.SearchByName(searchName);
+		}
+		// search by position
+		else {
+			int positionOption = Validation::ValidateIntInput("Enter position: ", 0, inventory.GetItemCount());
+			tempNode = inventory.SearchByPosition(positionOption);
+		}
+
+		// if not found
+		if (tempNode == nullptr) {
+			ClearScreen();
+			cout << "Not found" << endl;
+			return;
+		}
+
+		// Choose which attribute to edit
+		DisplayAttributeMenu();
+		int attributeOption = Validation::ValidateIntInput("Enter choice: ", 0, 4);
+		if (attributeOption == 0) return;
+
+		tempNode->DisplayNode();
+		// Update selected attribute
+		switch (attributeOption)
+		{
+		case 1: { // edit name
+			tempNode->GetItem().SetName(Validation::ValidateStringInput("Enter new name: "));
+			break;
+		}
+		case 2: { // edit type
+			DisplayItemTypeMenu();
+			tempNode->GetItem().SetType(Validation::ValidateItemTypeInput("Enter new type: "));
+			break;
+		}
+		case 3: { // edit price
+			tempNode->GetItem().SetPrice(Validation::ValidateFloatInput("Enter new price: ", MIN_PRICE, MAX_PRICE));
+			break;
+		}
+		case 4: { // edit quantity
+			tempNode->GetItem().SetQuantity(Validation::ValidateIntInput("Enter new quantity: ", MIN_QUANTITY, MAX_QUANTITY));
+			break;
+		}
+		default:
+			cout << "EditItem: Invalid input" << endl;
+			break;
+		}
+		ClearScreen();
+		tempNode->DisplayNode();
+		cout << "Item edited successfully" << endl;
+	}
+	catch (exception& e) {
+		cout << "Edit Item Error: " << e.what() << endl;
 		return;
-	}
-	DisplaySearchMenu();
-	int searchOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
-	if (searchOption == 0) return;
-
-	ItemNode* tempNode = nullptr;
-
-	if(searchOption == 1) {
-		string searchName = Validation::ValidateStringInput("Enter name: ");
-		tempNode = inventory->SearchByName(searchName);
-	}
-	else {
-		int positionOption = Validation::ValidateIntInput("Enter position: ", 0, inventory->GetItemCount());
-		tempNode = inventory->SearchByPosition(positionOption);
-	}
-
-	DisplayAttributeMenu();
-	int attributeOption = Validation::ValidateIntInput("Enter choice: ", 0, 4);
-	if (attributeOption == 0) return;
-
-	switch (attributeOption)
-	{
-	case 1: {
-		tempNode->GetItem().SetName(Validation::ValidateStringInput("Enter new name: "));
-		break;
-	}
-	case 2: {
-		DisplayItemTypeMenu();
-		tempNode->GetItem().SetType(Validation::ValidateItemTypeInput("Enter new type: "));
-		break;
-	}
-	case 3: {
-		tempNode->GetItem().SetPrice(Validation::ValidateFloatInput("Enter new price: ", MIN_PRICE, MAX_PRICE));
-		break;
-	}
-	case 4: {
-		tempNode->GetItem().SetQuantity(Validation::ValidateIntInput("Enter new quantity: ", MIN_QUANTITY, MAX_QUANTITY));
-		break;
-	}
-	default:
-		cout << "EditItem: Invalid input" << endl;
 	}
 }
 
 void InventoryManager::DeleteItem()
 {
-	if (inventory->GetItemCount() == 0) {
-		cout << "DeleteItem: No items to delete" << endl;
-		return;
-	}
-	DisplayItemPositionMenu();
-	int positionOption = Validation::ValidateIntInput("Enter option: ", 0, 3);
-	if (positionOption == 0) return;
-
 	try {
+		// check if inventory is empty
+		if (inventory.GetItemCount() == 0) {
+			cout << "DeleteItem: No items to delete" << endl;
+			return;
+		}
+
+		// choose delete position (head, tail, or body)
+		DisplayItemPositionMenu();
+		int positionOption = Validation::ValidateIntInput("Enter option: ", 0, 3);
+		if (positionOption == 0) return;
+
+		// delete from head
 		if (positionOption == 1) {
-			inventory->DeleteItemFromHead();
+			inventory.DeleteItemFromHead();
+			cout << "Item Delete successfully" << endl;
 			return;
 		}
+		// delete from tail
 		else if (positionOption == 2) {
-			inventory->DeleteItemFromTail();
+			inventory.DeleteItemFromTail();
+			cout << "Item Delete successfully" << endl;
 			return;
 		}
-		
+
+		// delete from body (need search)
 		DisplaySearchMenu();
 		int searchOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
 		if (searchOption == 0) return;
@@ -157,85 +198,124 @@ void InventoryManager::DeleteItem()
 		ItemNode* tempNode = nullptr;
 		int positionChoice = -1;
 
+		// search by name
 		if (searchOption == 1) {
 			string searchName = Validation::ValidateStringInput("Enter name: ");
-			tempNode = inventory->SearchByName(searchName);
+			tempNode = inventory.SearchByName(searchName);
 			if (!tempNode) {
 				cout << "DeleteItem: No item found with name " << searchName << endl;
 				return;
 			}
-			positionChoice = inventory->GetNodePosition(tempNode);
-			inventory->DeleteItemFromBody(positionChoice);
+			// convert node to position
+			positionChoice = inventory.GetNodePosition(tempNode);
+			inventory.DeleteItemFromBody(positionChoice);
 		}
+		// search by position
 		else if (searchOption == 2) {
 			// no need to check position exist since it is already checked in ValidateIntInput
-			positionChoice = Validation::ValidateIntInput("Enter position: ", 1, inventory->GetItemCount());
+			positionChoice = Validation::ValidateIntInput("Enter position: ", 1, inventory.GetItemCount());
+			tempNode = inventory.SearchByPosition(positionChoice - 1);
+			if (!tempNode) {
+				cout << "DeleteItem: No item found at position " << positionChoice << endl;
+				return;
+			}
 			// positionChoice - 1 because the user interface start from 1
 			// but the inventory is start from 0
-			inventory->DeleteItemFromBody(positionChoice - 1);
+			inventory.DeleteItemFromBody(positionChoice - 1);
 		}
+		ClearScreen();
+		cout << "Item delete successfully" << endl;
 	}
 	catch (exception& e) {
-		cout << "Error: " << e.what() << endl;
+		cout << "Delete Item Error: " << e.what() << endl;
 		return;
 	}
 }
 
 void InventoryManager::LoadInventory()
 {
-	DisplayFileMenu();
-	int pathOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
-	if (pathOption == 0) return;
+	try {
+		// display specific or default file menu
+		DisplayFileMenu();
+		int pathOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
+		if (pathOption == 0) return;
 
-	string filePath;
+		string filePath;
 
-	if (pathOption == 1) {
-		cout << "Enter file path to load inventory: ";
-		getline(cin, filePath);
-	}else if(pathOption == 2) {
-		filePath = "Data.txt";
+		// custom file path
+		if (pathOption == 1) {
+			cout << "Enter file path to load inventory: ";
+			getline(cin, filePath);
+		}
+		// default file path
+		else if (pathOption == 2) {
+			filePath = "Inventory.txt";
+		}
+
+		// validate file type
+		if (!Validation::ValidateFilePath(filePath)) {
+			cout << "LoadInventory: Invalid file. Only .txt allow" << endl;
+			return;
+		}
+		// load data
+		if (!inventory.LoadFromFile(filePath)) {
+			cout << "LoadInventory: Failed to load inventory from " << filePath << endl;
+			return;
+		}
+		cout << "Inventory loaded successfully from " << filePath << endl;
 	}
-	
-	if(!Validation::ValidateFilePath(filePath)) {
-		cout << "LoadInventory: Invalid file. Only .txt allow" << endl;
+	catch (exception& e) {
+		cout << "Load Inventory Error: " << e.what() << endl;
 		return;
 	}
-	if(!inventory->LoadFromFile(filePath)) {
-		cout << "LoadInventory: Failed to load inventory from " << filePath << endl;
-		return;
-	}
-	cout << "Inventory loaded successfully from " << filePath << endl;
 }
 
 void InventoryManager::SaveInventory()
 {
-	if(inventory->GetItemCount() == 0) {
-		cout << "SaveInventory: No items to save" << endl;
+	try {
+		// check if inventory is empty
+		if (inventory.GetItemCount() == 0) {
+			cout << "SaveInventory: No items to save" << endl;
+			return;
+		}
+
+		DisplayFileMenu();
+		int pathOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
+		if (pathOption == 0) return;
+
+		string filePath;
+
+		// custom file path
+		if (pathOption == 1) {
+			cout << "Enter file path to save inventory: ";
+			getline(cin, filePath);
+		}
+		// default file path
+		else if (pathOption == 2) {
+			filePath = "Inventory.txt";
+		}
+
+		// validate file type
+		if (!Validation::ValidateFilePath(filePath)) {
+			cout << "SaveInventory: Invalid file. Only .txt allow" << endl;
+			return;
+		}
+		// save data
+		if (!inventory.SaveToFile(filePath)) {
+			cout << "SaveInventory: Failed to save inventory to " << filePath << endl;
+			return;
+		}
+		cout << "Inventory saved successfully from " << filePath << endl;
+	}
+	catch (exception& e) {
+		cout << "Save Inventory Error: " << e.what() << endl;
 		return;
 	}
-	DisplayFileMenu();
-	int pathOption = Validation::ValidateIntInput("Enter option: ", 0, 2);
-	if (pathOption == 0) return;
+}
 
-	string filePath;
-
-	if (pathOption == 1) {
-		cout << "Enter file path to save inventory: ";
-		getline(cin, filePath);
-	}
-	else if (pathOption == 2) {
-		filePath = "Inventory.txt";
-	}
-
-	if (!Validation::ValidateFilePath(filePath)) {
-		cout << "SaveInventory: Invalid file. Only .txt allow" << endl;
-		return;
-	}
-	if (!inventory->SaveToFile(filePath)) {
-		cout << "SaveInventory: Failed to save inventory to " << filePath << endl;
-		return;
-	}
-	cout << "Inventory saved successfully from " << filePath << endl;
+void InventoryManager::ClearScreen()
+{
+	system("cls");
 }
 
 void InventoryManager::DisplayFileMenu()
@@ -309,40 +389,46 @@ void InventoryManager::DisplayMDSHeader() {
 
 void InventoryManager::Run()
 {
-	int searchOption = -1;
-	while (searchOption != 0) {
-		DisplayMenu();
+	try {
+		int searchOption = -1;
+		while (searchOption != 0) {
+			DisplayMenu();
 
-		searchOption = Validation::ValidateIntInput("Enter choice: ", 0, 7);
-		system("cls");
-		
-		switch (searchOption) {
-		case 1:
-			DisplayInventory();
-			break;
-		case 2:
-			SortInventory();
-			break;
-		case 3:
-			AddItem();
-			break;
-		case 4:
-			EditItem();
-			break;
-		case 5:
-			DeleteItem();
-			break;
-		case 6:
-			LoadInventory();
-			break;
-		case 7:
-			SaveInventory();
-			break;
-		case 0:
-			cout << "Exiting program..." << endl;
-			exit(0);
-		default:
-			cout << "Invalid input. Please try again." << endl;
+			searchOption = Validation::ValidateIntInput("Enter choice: ", 0, 7);
+			ClearScreen();
+
+			switch (searchOption) {
+			case 1:
+				DisplayInventory();
+				break;
+			case 2:
+				SortInventory();
+				break;
+			case 3:
+				AddItem();
+				break;
+			case 4:
+				EditItem();
+				break;
+			case 5:
+				DeleteItem();
+				break;
+			case 6:
+				LoadInventory();
+				break;
+			case 7:
+				SaveInventory();
+				break;
+			case 0:
+				cout << "Exiting program..." << endl;
+				exit(0);
+			default:
+				cout << "Invalid input. Please try again." << endl;
+			}
 		}
+	}
+	catch (exception& e) {
+		cout << "Run Function Error: " << e.what() << endl;
+		return;
 	}
 }
